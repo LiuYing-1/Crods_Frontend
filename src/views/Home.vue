@@ -1258,8 +1258,8 @@ export default {
         var clientHeight = document.documentElement.clientHeight
         var current = window.scrollY
         var ration = (clientHeight+current) / height
-        if (ration != 1) {
-          window.scrollTo(0, clientHeight)
+        if (ration <= 1) {
+          window.scrollTo(0, height)
         } else {
           window.scrollTo(0, 0)
         }
@@ -1270,7 +1270,7 @@ export default {
         var clientHeight = document.documentElement.clientHeight
         var current = window.scrollY
         var ration = (clientHeight+current) / height
-        if (ration != 1) {
+        if (ration <= 1) {
           document.getElementById('arrow').classList.add('openSidePartActiveArrow')
         } else {
           document.getElementById('arrow').classList.remove('openSidePartActiveArrow')
@@ -1352,13 +1352,13 @@ export default {
         document.getElementById('tab-page-four').classList.add('is-hidden')
       },
   },
-
-  mounted () {
+  
+  activated () {
       if(window.name == "") {
         window.name = "isRefresh"
       } else if (window.name == "isRefresh") {
         refreshTab()
-      }
+    }
   },
 }
 </script>
