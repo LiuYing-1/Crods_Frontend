@@ -44,25 +44,31 @@
                 <span>Tasks</span>
               </router-link>
 
-              <div class="dropdown is-right" v-bind:class="{'is-active': showDropdownMenu}">
-                <div class="dropdown-trigger" @click="showDropdownMenu = !showDropdownMenu">
-                  <button class="button is-success" aria-haspopup="true" aria-controls="dropdown-menu">
-                    <span class="icon">
-                      <i class="fas fa-user"></i>
-                    </span>
-                    <span>Login</span>
-                    <span class="icon is-small">
-                      <i class="fas fa-angle-down" aria-hidden="true"></i>
-                    </span>
-                  </button>
-                </div>
-                <div class="dropdown-menu" id="dropdown-menu" role="menu">
-                  <div class="dropdown-content">
-                    <router-link class="dropdown-item" to="login">Login</router-link>
-                    <router-link class="dropdown-item" to="register">Register</router-link>
+              <template v-if="$store.state.isAuthenticated">
+                <router-link to="/my-account" class="button is-success">My account</router-link>
+              </template>
+              
+              <template v-else>
+                <div class="dropdown is-right" v-bind:class="{'is-active': showDropdownMenu}">
+                  <div class="dropdown-trigger" @click="showDropdownMenu = !showDropdownMenu">
+                    <button class="button is-success" aria-haspopup="true" aria-controls="dropdown-menu">
+                      <span class="icon">
+                        <i class="fas fa-user"></i>
+                      </span>
+                      <span>Login</span>
+                      <span class="icon is-small">
+                        <i class="fas fa-angle-down" aria-hidden="true"></i>
+                      </span>
+                    </button>
+                  </div>
+                  <div class="dropdown-menu" id="dropdown-menu" role="menu">
+                    <div class="dropdown-content">
+                      <router-link class="dropdown-item" to="login">Login</router-link>
+                      <router-link class="dropdown-item" to="register">Register</router-link>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </template>
             </div>
           </div>
         </div>
@@ -83,6 +89,8 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 import WebChat from './components/WebChat.vue'
 import bulmaCarousel from '../node_modules/bulma-extensions/bulma-carousel/dist/js/bulma-carousel.min.js'
 export default {
@@ -93,6 +101,17 @@ export default {
       showDropdownMenu: false,
     }
   },
+  beforeCreated() {
+    this.$store.commit('initializeStore')
+
+    const token = this.$store.token
+
+    if (token) {
+      axios.defaults.headers.common['Authorization'] = "Token " + token
+    } else {
+      axios.defaults.headers.common['Authorization'] = ""
+    }
+  }
 }
 </script>
 
