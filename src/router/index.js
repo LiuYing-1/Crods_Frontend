@@ -22,6 +22,11 @@ const routes = [
     component: () => import(/* webpackChunkName: "marketplace" */ '../views/Marketplace.vue')
   },
   {
+    path: '/:tag_slug/:problem_slug',
+    name: 'Problem',
+    component: () => import(/* webpackChunkName: "problem" */ '../views/Problem.vue')
+  },
+  {
     path: '/cases',
     name: 'Cases',
     component: () => import(/* webpackChunkName: "cases" */ '../views/Cases.vue')
