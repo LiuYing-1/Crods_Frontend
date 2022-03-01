@@ -1,6 +1,6 @@
 <template>
   <div id="wrapper">
-    <nav class="navbar is-dark">
+    <nav class="navbar is-dark is-fixed-top">
       <div class="navbar-brand">
         <!-- Logo of the business -->
         <router-link :to="{name: 'Home'}">
@@ -41,7 +41,7 @@
             <div class="buttons">
               <router-link class="button is-light" to="tasks">
                 <span class="icon"><i class="fas fa-tasks"></i></span>
-                <span>Tasks</span>
+                <span>Tasks ({{ tasksTotalNum }})</span>
               </router-link>
 
               <template v-if="$store.state.isAuthenticated">
@@ -75,6 +75,10 @@
       </div>
     </nav>
 
+    <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading}">
+      <div class="lds-dual-ring"></div>
+    </div>
+
     <section class="section">
       <router-view :key="$router.path" />
     </section>
@@ -99,8 +103,24 @@ export default {
       itemSelected: false,
       showMobileMenu: false,
       showDropdownMenu: false,
+
+      tasks: {
+        items: []
+      }
     }
   },
+  computed: {
+    tasksTotalNum() {
+      let totalNum = 0
+
+      for (let i = 0; i < this.tasks.items.length; i++) {
+        totalNum = this.tasks.items.length
+      }
+
+      return totalNum
+    }
+  },
+
   beforeCreated() {
     this.$store.commit('initializeStore')
 
@@ -111,6 +131,10 @@ export default {
     } else {
       axios.defaults.headers.common['Authorization'] = ""
     }
+  },
+
+  mounted() {
+    this.tasks = this.$store.state.tasks
   }
 }
 </script>
@@ -149,4 +173,48 @@ button {
   font-size: 1rem;
 }
 
+.section {
+  margin-top: 2rem;
+}
+
+// This is the part for the Loading Bar
+.lds-dual-ring {
+  display: inline-block;
+  width: 80px;
+  height: 80px;
+}
+
+.lds-dual-ring:after {
+  content: " ";
+  display: block;
+  width: 64px;
+  height: 64px;
+  margin: 8px;
+  border-radius: 50%;
+  border: 6px solid #ccc;
+  border-color: #ccc transparent #ccc transparent;
+  animation: lds-dual-ring 1.2s linear infinite;
+}
+
+@keyframes lds-dual-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.is-loading-bar {
+    height: 0;
+    overflow: hidden;
+
+    -webkit-transition: all 0.3s;
+    transition: all 0.3s;
+
+    &.is-loading {
+      height: 80px;
+    }
+}
 </style>

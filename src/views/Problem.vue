@@ -1,5 +1,13 @@
 <template>
   <div class="problem">
+    <nav class="breadcrumb has-succeeds-separator" aria-label="breadcrumbs">
+      <ul>
+        <li><a href="/">FlyMeCrods</a></li>
+        <li><a href="/marketplace">Marketplace</a></li>
+        <li class="is-active"><a href="/problem" aria-current="page">Problem</a></li>
+      </ul>
+    </nav>
+
     <div class="columns is-multiline">
       <div class="column is-6">
         <figure class="image mb-6">
@@ -54,7 +62,7 @@
 
         <div class="field">
           <div class="control">
-            <a class="button is-dark">Add to Task List</a>
+            <a class="button is-dark" @click="addToTasks">Add to Task List</a>
             <a class="button" id="back" @click="goBack">Back</a>
           </div>
         </div>
@@ -65,6 +73,7 @@
 
 <script>
 import axios from 'axios'
+import { toast } from 'bulma-toast'
 
 export default {
     name: 'Problem',
@@ -77,11 +86,13 @@ export default {
         this.getProblem()
     },
     methods: {
-        getProblem() {
+        async getProblem() {
+            this.$store.commit('setIsLoading', true)
+
             const tag_slug = this.$route.params.tag_slug
             const problem_slug = this.$route.params.problem_slug
 
-            axios
+            await axios
                 .get(`/api/v1/problems/${tag_slug}/${problem_slug}`)
                 .then(response => {
                     this.problem = response.data
@@ -93,14 +104,46 @@ export default {
                     } else {
                         this.problem.status = 'Completed'
                     }
+
+                    document.title = this.problem.name + ' | FlyMeCrods'
                 })
                 .catch(error => {
                     console.log(error)
                 })
+
+            this.$store.commit('setIsLoading', false)
         },
 
         goBack() {
             this.$router.go(-1)
+        },
+
+        addToTasks() {
+          const item = {
+            problem: this.problem
+          }
+
+          this.$store.commit('addToTasks', item)
+
+          if (!this.$store.state.tasks.items.includes(item)) {
+            toast({
+              message: 'Please do not add the same task twice!',
+              type: 'is-danger',
+              dismissible: true,
+              pauseOnHover: true,
+              duration: 2000,
+              position: 'bottom-right'
+            })
+          } else {
+            toast({
+              message: 'The problem was added to your task list',
+              type: 'is-success',
+              dismissible: true,
+              pauseOnHover: true,
+              duration: 2000,
+              position: 'bottom-right'
+            })
+          }
         }
     }
 }

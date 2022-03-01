@@ -1360,5 +1360,9 @@ export default {
         refreshTab()
     }
   },
+
+  mounted() {
+    document.title = 'Home | FlyMeCrods' 
+  },
 }
 </script>

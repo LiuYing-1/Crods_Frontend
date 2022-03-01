@@ -27,6 +27,11 @@ const routes = [
     component: () => import(/* webpackChunkName: "problem" */ '../views/Problem.vue')
   },
   {
+    path: '/:tag_slug',
+    name: 'Tag',
+    component: () => import(/* webpackChunkName: "tag" */'../views/Tag.vue')
+  },
+  {
     path: '/cases',
     name: 'Cases',
     component: () => import(/* webpackChunkName: "cases" */ '../views/Cases.vue')
@@ -35,6 +40,11 @@ const routes = [
     path: '/contact',
     name: 'Contact',
     component: () => import(/* webpackChunkName: "contact" */ '../views/Contact.vue')
+  },
+  {
+    path: '/tasks',
+    name: 'Tasks',
+    component: () => import(/* webpackChunkName: "tasks" */ '../views/Tasks.vue')
   },
   {
     path: '/register',

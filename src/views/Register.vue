@@ -117,6 +117,10 @@ export default {
             }
         }
     },
+
+    mounted() {
+      document.title = "Register | FlyMeCrods"
+    }
 }
 </script>
 

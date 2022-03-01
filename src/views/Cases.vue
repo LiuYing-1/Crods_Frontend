@@ -9,3 +9,17 @@
     This is the <strong>Cases</strong> page.
   </div>
 </template>
+
+<script>
+export default {
+  name: 'Cases',
+  data() {
+    return {
+
+    }
+  },
+  mounted() {
+    document.title = "Cases | FlyMeCrods"
+  },
+}
+</script>

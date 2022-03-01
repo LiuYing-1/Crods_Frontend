@@ -20,8 +20,17 @@
 import toTopButton from '@/components/TheToTopButton.vue'
 
 export default {
+  name: 'Introduction',
+  data() {
+    return {
+
+    }
+  },
   components: {
     toTopButton,
+  },
+  mounted() {
+    document.title = "Introduction | FlyMeCrods"
   },
 }
 </script>
