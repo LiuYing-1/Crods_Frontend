@@ -151,7 +151,7 @@
                       <i class="fas fa-code"></i>
                     </div>
                     <div>
-                      <b>Informatics</b>
+                      <router-link to="/informatics">Informatics</router-link>
                     </div>
                   </div>
                 </div>
@@ -172,7 +172,7 @@
                       <i class="fas fa-chart-line"></i>
                     </div>
                     <div>
-                      <b>Business</b>
+                      <router-link to="/business">Business</router-link>
                     </div>
                   </div>
                 </div>
@@ -193,7 +193,7 @@
                       <i class="fas fa-balance-scale"></i>
                     </div>
                     <div>
-                      <b>Law</b>
+                      <router-link to="/law">Law</router-link>
                     </div>
                   </div>
                 </div>
@@ -215,7 +215,7 @@
                       <i class="fas fa-heartbeat"></i>
                     </div>
                     <div>
-                      <b>Health</b>
+                      <router-link to="/health">Health</router-link>
                     </div>
                   </div>
                 </div>
@@ -236,7 +236,7 @@
                       <i class="fas fa-pencil-ruler"></i>
                     </div>
                     <div>
-                      <b>Design</b>
+                      <router-link to="/design">Design</router-link>
                     </div>
                   </div>
                 </div>
@@ -257,7 +257,7 @@
                       <i class="fas fa-ellipsis-h"></i>
                     </div>
                     <div>
-                      <b>Others</b>
+                      <router-link to="/others">Others</router-link>
                     </div>
                   </div>
                 </div>
@@ -1056,6 +1056,12 @@
 
 #fields {
   background-color: rgb(220, 220, 220);
+}
+
+#fields a {
+  color: #363636;
+  font-weight: bold;
+  text-decoration: none;
 }
 
 #fields .subtitle :hover {

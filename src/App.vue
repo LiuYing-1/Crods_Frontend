@@ -34,6 +34,24 @@
           <router-link class="navbar-item" :to="{name: 'Cases'}">Cases</router-link>
           <router-link class="navbar-item" :to="{name: 'Introduction'}">Introduction</router-link>
           <router-link class="navbar-item" :to="{name: 'Contact'}">Contact</router-link>
+
+          <div class="navbar-item" id="search-part">
+            <form method="get" action="/search">
+              <div class="field has-addons">
+                <div class="control">
+                  <input type="text" class="input" placeholder="Search your problems here" name="query">
+                </div>
+
+                <div class="control">
+                  <button class="button is-light">
+                    <span class="icon">
+                      <i class="fas fa-search"></i>
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
         </div>
         <!-- Items (Specific) -->
         <div class="navbar-end">
@@ -63,8 +81,8 @@
                   </div>
                   <div class="dropdown-menu" id="dropdown-menu" role="menu">
                     <div class="dropdown-content">
-                      <router-link class="dropdown-item" to="login">Login</router-link>
-                      <router-link class="dropdown-item" to="register">Register</router-link>
+                      <router-link class="dropdown-item" to="/login">Login</router-link>
+                      <router-link class="dropdown-item" to="/register">Register</router-link>
                     </div>
                   </div>
                 </div>
@@ -135,7 +153,17 @@ export default {
 
   mounted() {
     this.tasks = this.$store.state.tasks
-  }
+  },
+  watch: {
+    '$route' (to, from) {
+      if (to.name !== 'Home') {
+        this.showDropdownMenu = false
+      } else {
+        this.showDropdownMenu = true
+      }
+      this.showDropdownMenu = false
+    }
+  },
 }
 </script>
 
@@ -216,5 +244,11 @@ button {
     &.is-loading {
       height: 80px;
     }
+}
+
+#search-part input {
+  font-family: "Noto Serif Display", 宋体;
+  src: local("Noto Serif Display"),
+  url(./fonts/NotoSerifDisplay/static/NotoSerifDisplay/NotoSerifDisplay-Regular.ttf) format("truetype"),
 }
 </style>
