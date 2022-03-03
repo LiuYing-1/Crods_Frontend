@@ -2,8 +2,8 @@
   <div class="login">
     <nav class="breadcrumb has-succeeds-separator" aria-label="breadcrumbs">
       <ul>
-        <li><a href="/">FlyMeCrods</a></li>
-        <li class="is-active"><a href="/register">Login</a></li>
+        <li><router-link to="/">FlyMeCrods</router-link></li>
+        <li class="is-active"><router-link to="/login">Login</router-link></li>
       </ul>
     </nav>
 

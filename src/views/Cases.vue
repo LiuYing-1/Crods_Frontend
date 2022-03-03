@@ -2,8 +2,8 @@
   <div class="cases">
     <nav class="breadcrumb has-succeeds-separator" aria-label="breadcrumbs">
       <ul>
-        <li><a href="/">FlyMeCrods</a></li>
-        <li class="is-active"><a href="/cases" aria-current="page">Cases</a></li>
+        <li><router-link to="/">FlyMeCrods</router-link></li>
+        <li class="is-active"><router-link to="/cases" aria-current="page">Cases</router-link></li>
       </ul>
     </nav>
     This is the <strong>Cases</strong> page.

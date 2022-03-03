@@ -2,8 +2,8 @@
   <div class="marketplace">
     <nav class="breadcrumb has-succeeds-separator" aria-label="breadcrumbs">
       <ul>
-        <li><a href="/">FlyMeCrods</a></li>
-        <li class="is-active"><a href="/marketplace" aria-current="page">Marketplace</a></li>
+        <li><router-link to="/">FlyMeCrods</router-link></li>
+        <li class="is-active"><router-link to="/marketplace" aria-current="page">Marketplace</router-link></li>
       </ul>
     </nav>
 

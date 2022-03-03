@@ -13,10 +13,10 @@
             </button>
           </span>
         </h1>
-        <hr />
-        <h2 class="is-size-5 has-text-grey">
-          Term: "{{ query }}" | Total: {{ problems.length }}
+        <h2 class="is-size-5 has-text-grey" id="result-num">
+          Term: "<b>{{ query }}</b>" | Total: <b>{{ problems.length }}</b>
         </h2>
+        <hr />
       </div>
       
       <template v-if="problems.length==0">

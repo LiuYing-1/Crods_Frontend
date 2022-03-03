@@ -2,8 +2,8 @@
   <div class="tasks">
     <nav class="breadcrumb has-succeeds-separator" aria-label="breadcrumbs">
       <ul>
-        <li><a href="/">FlyMeCrods</a></li>
-        <li class="is-active"><a>Tasks</a></li>
+        <li><router-link to="/">FlyMeCrods</router-link></li>
+        <li class="is-active"><router-link to="#">Tasks</router-link></li>
       </ul>
     </nav>
 
@@ -26,10 +26,10 @@
         <div class="box">
           <p class="intro has-text-centered subtitle"><b>Check Your Tasks that Are Ready to Do</b></p>
           <div class="image">
-            <img :src="require('@/assets/ready_todo_cart.jpg')" alt="ready-to-do">
+            <img :src="require('@/assets/ready_todo_cart.jpg')" alt="ready-to-do" @load="loadBar">
           </div>
           <button class="button is-dark">
-            <router-link to="/list"><p class="is-size-4">Check</p></router-link>
+            <router-link to="/checklist"><p class="is-size-4">Check</p></router-link>
           </button>
           
           <p class="reference-pic">Photo by Startup Stock Photos from Pexels</p>
@@ -46,8 +46,14 @@ export default {
     return {
     }
   },
+  methods: {
+    loadBar () {
+      this.$store.commit('setIsLoading', false) 
+    }
+  },
   mounted() {
     document.title = "Tasks | FlyMeCrods"
+    this.$store.commit('setIsLoading', true) 
   },
 }
 </script>

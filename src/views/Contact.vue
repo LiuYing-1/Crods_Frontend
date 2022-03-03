@@ -2,8 +2,8 @@
   <div class="contact">
   <nav class="breadcrumb has-succeeds-separator" aria-label="breadcrumbs">
       <ul>
-        <li><a href="/">FlyMeCrods</a></li>
-        <li class="is-active"><a href="/contact" aria-current="page">Contact</a></li>
+        <li><router-link to="/">FlyMeCrods</router-link></li>
+        <li class="is-active"><router-link to="/contact" aria-current="page">Contact</router-link></li>
       </ul>
     </nav>  
     This is the <strong>Contact</strong> page.

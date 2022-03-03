@@ -2,9 +2,9 @@
   <div class="problem">
     <nav class="breadcrumb has-succeeds-separator" aria-label="breadcrumbs">
       <ul>
-        <li><a href="/">FlyMeCrods</a></li>
-        <li><a href="/marketplace">Marketplace</a></li>
-        <li class="is-active"><a href="/problem" aria-current="page">Problem</a></li>
+        <li><router-link to="/">FlyMeCrods</router-link></li>
+        <li><router-link to="/marketplace">Marketplace</router-link></li>
+        <li class="is-active"><router-link to="/problem" aria-current="page">Problem</router-link></li>
       </ul>
     </nav>
 

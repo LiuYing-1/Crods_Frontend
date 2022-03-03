@@ -3,8 +3,8 @@
 
     <nav class="breadcrumb has-succeeds-separator" aria-label="breadcrumbs">
       <ul>
-        <li><a href="/">FlyMeCrods</a></li>
-        <li class="is-active"><a href="/" aria-current="page">Home</a></li>
+        <li><router-link to="/">FlyMeCrods</router-link></li>
+        <li class="is-active"><router-link to="/" aria-current="page">Home</router-link></li>
       </ul>
     </nav>
 
@@ -598,10 +598,12 @@
 
         <div class="publish-button mt-6">
           <button class="button is-primary">
-            <div class="icon">
-              <i class="fas fa-plus"></i>
-            </div>
-            <p>Post Request for Free</p>
+            <router-link to="/post">
+              <div class="icon">
+                <i class="fas fa-plus"></i>
+              </div>
+              <p>Post Request for Free</p>
+            </router-link>
           </button>
         </div>
       </div>
@@ -1164,6 +1166,10 @@
 
 #steps .end-step .icon {
   margin: 1rem;
+}
+
+.publish-button .button a {
+  display: flex;
 }
 
 #frames {

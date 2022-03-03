@@ -47,6 +47,11 @@ const routes = [
     component: () => import(/* webpackChunkName: "contact" */ '../views/Contact.vue')
   },
   {
+    path: '/post',
+    name: 'Post',
+    component: () => import(/* webpackChunkName: "post" */ '../views/Post.vue')
+  },
+  {
     path: '/search',
     name: 'Search',
     component: () => import(/* webpackChunkName: "search" */ '../views/Search.vue')
@@ -55,6 +60,19 @@ const routes = [
     path: '/tasks',
     name: 'Tasks',
     component: () => import(/* webpackChunkName: "tasks" */ '../views/Tasks.vue')
+  },
+  {
+    path: '/checklist',
+    name: 'Checklist',
+    component: () => import(/* webpackChunkName: "checklist" */ '../views/CheckList.vue')
+  },
+  {
+    path: '/checklist/confirmation',
+    name: 'Confirmation',
+    component: () => import(/* webpackChunkName: "checklist" */ '../views/Confirmation.vue'),
+    meta: {
+      requireLogin: true
+    }
   },
   {
     path: '/register',

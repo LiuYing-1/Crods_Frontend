@@ -57,7 +57,7 @@
         <div class="navbar-end">
           <div class="navbar-item">
             <div class="buttons">
-              <router-link class="button is-light" to="tasks">
+              <router-link class="button is-light" to="/tasks">
                 <span class="icon"><i class="fas fa-tasks"></i></span>
                 <span>Tasks ({{ tasksTotalNum }})</span>
               </router-link>

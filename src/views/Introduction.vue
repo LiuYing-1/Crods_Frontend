@@ -2,8 +2,8 @@
   <div class="introduction">
     <nav class="breadcrumb has-succeeds-separator" aria-label="breadcrumbs">
       <ul>
-        <li><a href="/">FlyMeCrods</a></li>
-        <li class="is-active"><a href="/introduction" aria-current="page">Introduction</a></li>
+        <li><router-link to="/">FlyMeCrods</router-link></li>
+        <li class="is-active"><router-link to="/introduction" aria-current="page">Introduction</router-link></li>
       </ul>
     </nav>
     <h1>This is the <strong>Introduction</strong> page.</h1>

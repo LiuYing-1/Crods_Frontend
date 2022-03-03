@@ -29,7 +29,7 @@ export default createStore({
 
     addToTasks(state, item) {
       const exists = state.tasks.items.filter(i => i.problem.id === item.problem.id)
-
+      
       if (!exists.length) {
         state.tasks.items.push(item)
       }
