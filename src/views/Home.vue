@@ -1282,10 +1282,12 @@ export default {
         var clientHeight = document.documentElement.clientHeight
         var current = window.scrollY
         var ration = (clientHeight+current) / height
-        if (ration <= 1) {
-          document.getElementById('arrow').classList.add('openSidePartActiveArrow')
-        } else {
-          document.getElementById('arrow').classList.remove('openSidePartActiveArrow')
+        if (document.getElementById('arrow')) {
+          if (ration <= 1) {
+            document.getElementById('arrow').classList.add('openSidePartActiveArrow')
+          } else {
+            document.getElementById('arrow').classList.remove('openSidePartActiveArrow')
+          }
         }
       },
 

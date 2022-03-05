@@ -24,7 +24,7 @@
             <div class="field">
               <label>Password</label>
               <div class="control">
-                <input type="text" class="input" v-model="password">
+                <input type="password" class="input" v-model="password">
               </div>
             </div>
 
@@ -80,6 +80,10 @@ export default {
               this.$store.commit('setToken', token)
               axios.defaults.headers.common['Authorization'] = "Token " + token
               localStorage.setItem('token', token)
+
+              localStorage.setItem('username', response.data.user_name)
+              localStorage.setItem('userid', response.data.user_id)
+
               const toPath = this.$route.query.to || '/'
               this.$router.push(toPath)
             })

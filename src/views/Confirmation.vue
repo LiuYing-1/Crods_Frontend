@@ -88,7 +88,6 @@ export default {
         items: []
       },
       terms: false,
-      errors: []
     }
   },
   methods: {

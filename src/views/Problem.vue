@@ -96,7 +96,10 @@ export default {
                 .get(`/api/v1/problems/${tag_slug}/${problem_slug}`)
                 .then(response => {
                     this.problem = response.data
-                    
+
+                    this.problem.deadline = this.problem.deadline.split('T')[0] + ' ' + this.problem.deadline.split('T')[1].split('+')[0]
+                    this.problem.date_posted = this.problem.date_posted.split('T')[0] + ' ' + this.problem.date_posted.split('T')[1].split('.')[0]
+
                     if (this.problem.status == 0) {
                         this.problem.status = 'Unaccepted'
                     } else if (this.problem.status == 1) {
