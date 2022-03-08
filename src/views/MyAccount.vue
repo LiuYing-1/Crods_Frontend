@@ -116,7 +116,17 @@
       <div class="column is-12" id="posted">
         <div class="hero is-info">
           <div class="hero-body">
-            <p class="title is-fullwidth">Posted</p>
+            <div id="title-part">
+              <p class="title is-fullwidth">Posted</p>
+              <router-link to="/post" class="routerlink">
+                <div class="post-button">
+                  <button class="button is-primary">
+                    <i class="fas fa-plus mr-3"></i>
+                    <span>New Problem</span>
+                  </button>
+                </div>
+              </router-link>
+            </div>
             <template v-if="this.posted.length">
               <div v-for="(item, index) in this.posted" v-bind:key="item.id">
                 <div class="box mb-3">
@@ -372,6 +382,23 @@ form input{
 #posted .box a:hover {
   color: pink;
   transition: all 0.4s;
+}
+
+#posted .hero-body #title-part {
+  position: relative;
+  display: flex;
+}
+
+#posted #title-part .routerlink {
+  position: absolute;
+  top: -0.2rem;
+  right: 0rem;
+}
+
+.post-button .button:hover {
+  color: black;
+  background-color: #fff;
+  transition: all 0.6s;
 }
 
 .tag {

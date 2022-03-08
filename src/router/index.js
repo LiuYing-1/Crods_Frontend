@@ -49,7 +49,10 @@ const routes = [
   {
     path: '/post',
     name: 'Post',
-    component: () => import(/* webpackChunkName: "post" */ '../views/Post.vue')
+    component: () => import(/* webpackChunkName: "post" */ '../views/Post.vue'),
+    meta: {
+      requireLogin: true
+    }
   },
   {
     path: '/search',

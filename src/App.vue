@@ -164,6 +164,8 @@ export default {
       this.showDropdownMenu = false
     }
   },
+  methods: {
+  }
 }
 </script>
 
