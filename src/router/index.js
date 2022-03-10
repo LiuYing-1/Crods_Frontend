@@ -52,7 +52,12 @@ const routes = [
     component: () => import(/* webpackChunkName: "post" */ '../views/Post.vue'),
     meta: {
       requireLogin: true
-    }
+    },
+  },
+  {
+    path: '/post/success',
+    name: 'SuccessPost',
+    component: () => import(/* webpackChunkName: "postsuccess" */ '../views/SuccessPost.vue')
   },
   {
     path: '/search',
@@ -94,6 +99,15 @@ const routes = [
     meta: {
       requireLogin: true
     }
+  },
+  {
+    path: '/404',
+    name: '404',
+    component: () => import(/* webpackChunkName: "404" */ '../views/PageNotFound.vue')
+  },
+  {
+    path: '/:pathMatch(.*)',
+    redirect: '/404'
   }
 ]
 

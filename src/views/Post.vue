@@ -41,6 +41,7 @@
           <div class="column is-12 has-text-centered">
             <p class="title" id="form-title">Form</p>
           </div>
+          <p id="notice-for-form">* All fields are required.</p>
           <div class="column is-12">
             <form @submit.prevent="submitForm">
               
@@ -79,7 +80,7 @@
                   <label class="label">Image</label>
                   <div class="file is-right is-dark">
                     <label class="file-label">
-                      <input class="file-input" type="file">
+                      <input class="file-input" type="file" accept="image/*">
                       <span class="file-cta">
                         <span class="file-icon">
                           <i class="fas fa-upload"></i>
@@ -99,21 +100,23 @@
               <div class="field">
                 <label class="label">Problem Name</label>
                 <div class="control">
-                  <input class="input" type="text" placeholder="Problem Name" v-model="this.problem_name">
+                  <input class="input" type="text" placeholder="e.g., Software Development" maxlength=25 v-model="this.problem_name">
                 </div>
+                <span>{{this.problem_name.length}}/25</span>
               </div>
 
               <div class="field">
                 <label class="label">Problem Description</label>
                 <div class="control">
-                  <input class="input" type="text" placeholder="Simplify your problem in one sentence" v-model="this.problem_description" />
+                  <input class="input" type="text" placeholder="Simplify your problem in one sentence" maxlength=60 v-model="this.problem_description" />
                 </div>
+                <span>{{this.problem_description.length}}/60</span>
               </div>
 
               <div class="field">
                 <label class="label">Problem Details</label>
                 <div class="control">
-                  <textarea class="textarea" placeholder="Describe your problem as detail as you can" v-model="this.problem_details"></textarea>
+                  <textarea class="textarea" placeholder="Describe your problem as detailed as you can" v-model="this.problem_details"></textarea>
                 </div>
               </div>
               
@@ -153,6 +156,7 @@ export default {
       getFileName() {
         const fileInput = document.querySelector('input[type=file]')
         fileInput.onchange = () => {
+          this.problem_image = fileInput.files[0].name
           if (fileInput.files.length > 0) {
             const fileName = document.querySelector('.file-name')
             fileName.textContent = fileInput.files[0].name
@@ -186,9 +190,9 @@ export default {
             this.errors.push('Problem Details is missing!')
         }
 
-        // if (this.problem_image === '') {
-        //     this.errors.push('Problem Image is missing!')
-        // }
+        if (this.problem_image === '') {
+            this.errors.push('Problem Image is missing!')
+        }
         
         if (!this.errors.length) {
           // Align the matching name of the tag
@@ -222,7 +226,7 @@ export default {
           axios(options)
           .then(response => {
             console.log(response)
-            // this.$router.push('/')
+            this.$router.push('/post/success')
           })
           .catch(error => {
             if(error.response) {
@@ -327,14 +331,19 @@ form .post-button .button {
   width: 60%;
 }
 
+#notice-for-form {
+  color: red;
+}
+
 @media screen and (max-width: 800px) {
   form #short-part {
     display: flex;
     flex-direction: column;
   }
 
-  form #short-part #tag, form #short-part #budget, form #short-part #deadline {
+  form #short-part #tag, form #short-part #budget, form #short-part #deadline, form #image {
     margin-bottom: 1rem;
+    width: 100%;
   }
 
   #form-title {
