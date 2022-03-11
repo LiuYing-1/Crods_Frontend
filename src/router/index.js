@@ -124,4 +124,9 @@ router.beforeEach((to, from, next) => {
   }
 })
 
+// This is the method to route the new page to the top.
+router.afterEach((to, from, next) => {
+  window.scrollTo(0, 0);
+})
+
 export default router

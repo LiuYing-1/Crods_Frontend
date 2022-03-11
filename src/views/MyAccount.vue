@@ -153,7 +153,7 @@
                     <p>{{ item.deadline }}</p>
                   </div>
                   <div class="header-name">
-                    <p>PubDate</p>
+                    <p>Publish</p>
                   </div>
                   <div class="posted-problem-date-posted">
                     <p>{{ item.date_posted }}</p>
@@ -302,8 +302,8 @@ export default {
                 // Assign to specific page for problems
                 this.posted[i].get_absolute_url = this.posted[i].get_absolute_url
                 // Convert to readable format
-                this.posted[i].deadline = this.posted[i].deadline.split('T')[0] + ' ' + this.posted[i].deadline.split('T')[1].split('+')[0]
-                this.posted[i].date_posted = this.posted[i].date_posted.split('T')[0] + ' ' + this.posted[i].date_posted.split('T')[1].split('.')[0]
+                this.posted[i].deadline = this.posted[i].deadline.split('T')[0]
+                this.posted[i].date_posted = this.posted[i].date_posted.split('T')[0]
                 if (this.posted[i].status == 0) {
                   this.posted[i].status = 'Unaccepted'
                 } else if (this.posted[i].status == 1) {
@@ -380,7 +380,7 @@ form input{
 }
 
 #posted .box a:hover {
-  color: pink;
+  color: #3e8ed0;
   transition: all 0.4s;
 }
 

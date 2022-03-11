@@ -12,8 +12,8 @@ export default createStore({
 
   mutations: {
     initializeStore(state) {
-      if (localStorage(state).getItem('tasks')) {
-        state.tasks = JSON.parse(localStorage(state).getItem('tasks'))
+      if (localStorage.getItem('tasks')) {
+        state.tasks = JSON.parse(localStorage.getItem('tasks'))
       } else {
         localStorage.setItem('tasks', JSON.stringify(state.tasks))
       }

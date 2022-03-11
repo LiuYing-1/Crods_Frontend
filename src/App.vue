@@ -139,7 +139,7 @@ export default {
     }
   },
 
-  beforeCreated() {
+  beforeCreate() {
     this.$store.commit('initializeStore')
 
     const token = this.$store.token
