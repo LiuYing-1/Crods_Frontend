@@ -59,6 +59,13 @@ export default {
       errors: []
     }
   },
+  // Methods to Change the Background Color for Login.vue
+  beforeRouteEnter() {
+      document.querySelector('body').setAttribute('style', 'background-image: linear-gradient(135deg, white 0%, #363636 100%)')
+  },
+  beforeRouteLeave() {
+    document.querySelector('body').setAttribute('style', 'background-image: #fafafa')
+  },
   mounted() {
     document.title = 'Login | FlyMeCrods'
   },
@@ -109,6 +116,10 @@ export default {
 
 <style scoped>
 .login .box {
-  background-image: linear-gradient(135deg, white 0%, #363636 100%);
+  margin-bottom: 20%;
+}
+
+.login .box input {
+  font-family: 'Noto Serif Display', serif;
 }
 </style>

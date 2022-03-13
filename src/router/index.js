@@ -101,6 +101,11 @@ const routes = [
     }
   },
   {
+    path: '/my-account/problem-edit/:tag_slug/:problem_slug',
+    name: 'ProblemEdit',
+    component: () => import(/* webpackChunkName: "my-account" */ '../views/ProblemEdit.vue'),
+  },
+  {
     path: '/404',
     name: '404',
     component: () => import(/* webpackChunkName: "404" */ '../views/PageNotFound.vue')

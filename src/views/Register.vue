@@ -117,7 +117,13 @@ export default {
             }
         }
     },
-
+    // Methods to Change the Background Color for Register.vue
+    beforeRouteEnter() {
+      document.querySelector('body').setAttribute('style', 'background-image: linear-gradient(135deg, white 0%, #363636 100%)')
+    },
+    beforeRouteLeave() {
+      document.querySelector('body').setAttribute('style', 'background-image: #fafafa')
+    },
     mounted() {
       document.title = "Register | FlyMeCrods"
     }
@@ -126,7 +132,11 @@ export default {
 
 <style scoped>
 .register .box {
-  background-image: linear-gradient(135deg, white 0%, #363636 100%);
+  margin-bottom: 15%;
+}
+
+.register .box input {
+  font-family: 'Noto Serif Display', serif;
 }
 
 @media screen and (max-width: 800px) {

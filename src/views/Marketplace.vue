@@ -112,8 +112,8 @@ export default {
     document.title = "Marketplace | FlyMeCrods"
   },
   methods: {
-    getLatestProblems() {
-      axios
+    async getLatestProblems() {
+      await axios
         .get('/api/v1/latest-problems')
         .then(response => {
           this.latestProblems = response.data

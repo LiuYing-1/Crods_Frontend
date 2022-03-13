@@ -300,7 +300,7 @@ export default {
               
               for (let i = 0; i < this.posted.length; i++) {
                 // Assign to specific page for problems
-                this.posted[i].get_absolute_url = this.posted[i].get_absolute_url
+                this.posted[i].get_absolute_url = '/my-account/problem-edit' + this.posted[i].get_absolute_url
                 // Convert to readable format
                 this.posted[i].deadline = this.posted[i].deadline.split('T')[0]
                 this.posted[i].date_posted = this.posted[i].date_posted.split('T')[0]
