@@ -68,7 +68,9 @@
                 <p class="subtitle"><b>Total: {{ tasks.items.length }}</b></p>
               </div>
               <div class="accept-button">
-                <button class="button is-primary" v-if="terms" @click="accept">Accept</button>
+                <button class="button is-primary" v-if="terms" @click="accept">
+                  <router-link to="/checklist/confirmation/motivation">Accept</router-link>
+                </button>
               </div>
             </div>
           </div>
@@ -170,6 +172,16 @@ export default {
   width: 50%;
   display: flex;
   justify-content: center;
+}
+
+#total-part .accept-button {
+  width: 50%;
+  display: flex;
+  justify-content: center;
+}
+
+#total-part .accept-button .button a {
+  color: white;
 }
 
 @media screen and (max-width: 800px) {

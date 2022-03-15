@@ -226,7 +226,7 @@ export default {
           axios(options)
           .then(response => {
             console.log(response)
-            this.$router.push('/post/success')
+            this.$router.push('/success')
           })
           .catch(error => {
             if(error.response) {

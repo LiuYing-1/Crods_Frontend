@@ -55,7 +55,7 @@ const routes = [
     },
   },
   {
-    path: '/post/success',
+    path: '/success',
     name: 'SuccessPost',
     component: () => import(/* webpackChunkName: "postsuccess" */ '../views/SuccessPost.vue')
   },
@@ -81,6 +81,11 @@ const routes = [
     meta: {
       requireLogin: true
     }
+  },
+  {
+    path: '/checklist/confirmation/motivation',
+    name: 'Motivation',
+    component: () => import(/* webpackChunkName: "checklist" */ '../views/Motivation.vue'),
   },
   {
     path: '/register',

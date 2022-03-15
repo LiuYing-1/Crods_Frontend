@@ -1,14 +1,5 @@
 <template>
   <div class="page-post-successfully">
-    <nav class="breadcrumb has-succeeds-separator" aria-label="breadcrumbs">
-      <ul>
-        <li><router-link to="/">FlyMeCrods</router-link></li>
-        <li><router-link to="/tasks">Tasks</router-link></li>
-        <li><router-link to="/post">Post</router-link></li>
-        <li class="is-active"><router-link to="/post/success" aria-current="page">Success</router-link></li>
-      </ul>
-    </nav>
-
     <div class="container">
       <div class="box" :class="{ shake: noActivated }" >
         <div id="icon">
@@ -47,9 +38,7 @@ export default {
                         this.show = true
                         clearInterval(this.timer)
                         this.timer = null
-                        this.$router.push({
-                            path: '/post'
-                        })
+                        this.$router.push('/marketplace')
                     }
                 }, 1000)
             }
@@ -72,6 +61,7 @@ export default {
 }
 
 .container {
+  margin-top: 2rem;
   display: flex;
   flex-direction: column;
   justify-content: center;

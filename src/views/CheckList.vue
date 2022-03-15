@@ -43,11 +43,11 @@
             <span>{{ item.problem.name }}</span>
           </div>
         </div>
-        <b>{{ listLength }} problems</b>
+        <b>{{ listLength }} problem(s)</b>
 
         <hr />
 
-        <router-link to="/checklist/confirmation" class="button is-dark" v-if="listLength">Proceed to Accept</router-link>
+        <router-link to="/checklist/confirmation" class="button is-dark" v-if="listLength && listLength == 1">Proceed to Accept</router-link>
       </div>
     </div>
   </div>

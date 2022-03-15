@@ -7,191 +7,259 @@
       </ul>
     </nav>
 
-    <div class="columns is-multiline">
-      <div class="column is-12">
-        <h1 class="title">My Account</h1>
-      </div>
+    <!-- This is the Page for the Admin -->
+    <template v-if="user.username == 'YING'">
+      <div class="columns is-multiline" id="admin-page">
+        <div class="column is-12">
+          <h1 class="title">Admin</h1>
+        </div>
 
-      <div class="column is-12">
-        <div class="hero is-dark is-halfheight">
-          <div class="hero-body" id="welcome-back-body">
-            <p class="subtitle has-text-centered">Dear <b><u>{{ user.username }}</u></b>, welcome back to FlyMeCrods!</p>
-            <button @click="logout()" class="button is-danger">Log out</button>
-            <div class="refs mt-5">
-              <a href=#profile>Profile</a>
-              <a href=#posted>Posted</a>
-              <a href=#picked>Picked</a>
-              <a href=#sum>Summary</a>
+        <div class="column is-12">
+          <div class="hero is-info is-halfheight">
+            <div class="hero-body" id="welcome-back-body">
+              <p class="subtitle has-text-centered">Dear <u>{{ user.username }}</u>, welcome back to FlyMeCrods!</p>
+              <button @click="logout()" class="button is-danger">Log out</button>
+              <div class="refs mt-5">
+                <a href="#global">Global</a>
+                <a href="#presession">Presession</a>
+                <a href="#distribution">Distribution</a>
+                <a href="#summary">Summary</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="column is-12" id="global">
+          <div class="hero is-dark">
+            <div class="hero-body">
+              <div class="title">Global</div>
+              <div><a href="http://localhost:8000/admin" target="_blank">Click here to Enter <b>FlyMeCrods</b> Backend</a></div>
+            </div>
+          </div>
+        </div>
+        <div class="column is-12" id="presession">
+          <div class="hero is-light">
+            <div class="hero-body">
+              <div class="title">Presession</div>
+              <template v-if="this.presessions.length == 0">
+                <div class="box">There is no precession here...</div>
+              </template>
+              <template v-else>
+                <div v-for="(item, index) in this.presessions" v-bind:key="item.id">
+                  <div class="box">
+                    <div class="tag">{{index+1}}</div>
+                    <p>{{item.get_problem_name}}</p>
+                    <p>{{item.get_picker_name}}</p>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </div>
+        </div>
+        <div class="column is-12" id="distribution">
+          <div class="hero is-warning">
+            <div class="hero-body">
+              <div class="title">Distribution</div>
+
+            </div>
+          </div>
+        </div>
+        <div class="column is-12" id="summary">
+          <div class="hero is-primary">
+            <div class="hero-body">
+              <div class="title">Summary</div>
             </div>
           </div>
         </div>
       </div>
+    </template>
 
-      <div class="column is-12" id="profile" >
-        <div class="hero is-light">
-          <div class="hero-body">
-            <p class="title">Profile</p>
-            <form @submit.prevent="submitForm" class="columns is-multiline">
-              <div class="column is-3">
-                <div class="field">
-                  <label class="label">Username</label>
-                  <div class="control">
-                    <input class="input" type="text" placeholder="Username" v-model="user.username" disabled="disabled">
-                  </div>
-                </div>
-              </div>
-              <div class="column is-3">
-                <div class="field">
-                  <label class="label">Password (Token)</label>
-                  <div class="control">
-                    <input class="input" type="text" placeholder="Password" v-model="user.password" disabled="disabled">
-                  </div>
-                </div>
-              </div>
-              <div class="column is-3">
-                <div class="field">
-                  <label class="label">Email</label>
-                  <div class="control">
-                    <input class="input" type="email" placeholder="Empty" v-model="user.email" v-if="save_button">
-                    <input class="input" type="email" placeholder="Empty" v-model="user.email" v-if="!save_button" disabled>
-                  </div>
-                  
-                </div>
-              </div>
-              <div class="column is-3">
-                <div class="field">
-                  <label class="label">Posted Number</label>
-                  <div class="control">
-                    <input class="input" type="text" placeholder="Posted Number" v-model="user.posts_num" disabled="disabled">
-                  </div>
-                </div>
-              </div>
-              <div class="column is-3">
-                <div class="field">
-                  <label class="label">Picked Number</label>
-                  <div class="control">
-                    <input class="input" type="text" placeholder="Picked Number" v-model="user.picks_num" disabled="disabled">
-                  </div>
-                </div>
-              </div>
-              <div class="column is-3">
-                <div class="filed">
-                  <label class="label">Status</label>
-                  <div class="control">
-                    <input class="input" type="text" placeholder="Status" v-model="user.is_busy" disabled="disabled">
-                  </div>
-                </div>
-              </div>
-              <div class="column is-3">
-                <div class="filed">
-                  <label class="label">Balance</label>
-                  <div class="control">
-                    <input class="input" type="text" placeholder="Balance" v-model="user.balance" disabled="disabled">
-                  </div>
-                </div>
-              </div>
-              <div class="column is-3">
-                <div class="filed">
-                  <label class="label">Reputation</label>
-                  <div class="control">
-                    <input class="input" type="text" placeholder="Reputation" v-model="user.reputation" disabled="disabled">
-                  </div>
-                </div>
-              </div>
-              
-              <div class="column is-12"  id="save-button">
-                <div class="field mt-3">
-                  <div class="control">
-                    <button class="button is-dark" v-if="!save_button" @click="save_button = !save_button">Modify</button>
-                    <button class="button is-primary" v-if="save_button">Save</button>
-                    <button class="button ml-3" v-if="save_button" @click="save_button = !save_button">Cancel</button>
-                  </div>
-                </div>
-              </div>
-            </form>
-          </div>
+    <!-- This is the Page for Normal Client -->
+    <template v-else>
+      <div class="columns is-multiline">
+        <div class="column is-12">
+          <h1 class="title">My Account</h1>
         </div>
-      </div>
 
-      <div class="column is-12" id="posted">
-        <div class="hero is-info">
-          <div class="hero-body">
-            <div id="title-part">
-              <p class="title is-fullwidth">Posted</p>
-              <router-link to="/post" class="routerlink">
-                <div class="post-button">
-                  <button class="button is-primary">
-                    <i class="fas fa-plus mr-3"></i>
-                    <span>New Problem</span>
-                  </button>
-                </div>
-              </router-link>
+        <div class="column is-12">
+          <div class="hero is-dark is-halfheight">
+            <div class="hero-body" id="welcome-back-body">
+              <p class="subtitle has-text-centered">Dear <b><u>{{ user.username }}</u></b>, welcome back to FlyMeCrods!</p>
+              <button @click="logout()" class="button is-danger">Log out</button>
+              <div class="refs mt-5">
+                <a href=#profile>Profile</a>
+                <a href=#posted>Posted</a>
+                <a href=#picked>Picked</a>
+                <a href=#sum>Summary</a>
+              </div>
             </div>
-            <template v-if="this.posted.length">
-              <div v-for="(item, index) in this.posted" v-bind:key="item.id">
-                <div class="box mb-3">
-                  <div class="tag">
-                    <span class="has-text-weight-bold mr-2">{{ index+1 }}</span>
-                    <span class="has-text-weight-bold">{{ item.get_tagname }}</span>
-                  </div>
-                  <div class="header-name">
-                    <p>Problem</p>
-                  </div>
-                  <div class="posted-problem-name">
-                    <router-link :to="item.get_absolute_url">{{ item.name }}</router-link>
-                  </div>
-                  <div class="header-name">
-                    <p>Budget</p>
-                  </div>
-                  <div class="posted-problem-budget">
-                    <p>&euro; {{ item.budget }}</p>
-                  </div>
-                  <div class="header-name">
-                    <p>Deadline</p>
-                  </div>
-                  <div class="posted-problem-deadline">
-                    <p>{{ item.deadline }}</p>
-                  </div>
-                  <div class="header-name">
-                    <p>Publish</p>
-                  </div>
-                  <div class="posted-problem-date-posted">
-                    <p>{{ item.date_posted }}</p>
-                  </div>
-                  <div class="header-name">
-                    <p>Status</p>
-                  </div>
-                  <div class="posted-problem-status">
-                    <p>{{ item.status }}</p>
+          </div>
+        </div>
+
+        <div class="column is-12" id="profile" >
+          <div class="hero is-light">
+            <div class="hero-body">
+              <p class="title">Profile</p>
+              <form @submit.prevent="submitForm" class="columns is-multiline">
+                <div class="column is-3">
+                  <div class="field">
+                    <label class="label">Username</label>
+                    <div class="control">
+                      <input class="input" type="text" placeholder="Username" v-model="user.username" disabled="disabled">
+                    </div>
                   </div>
                 </div>
-              </div>
-            </template>
-            <template v-else>
-              <div class="box">
-                <p>You haven't posted any problems till now.</p>
-              </div>
-            </template>
+                <div class="column is-3">
+                  <div class="field">
+                    <label class="label">Password (Token)</label>
+                    <div class="control">
+                      <input class="input" type="text" placeholder="Password" v-model="user.password" disabled="disabled">
+                    </div>
+                  </div>
+                </div>
+                <div class="column is-3">
+                  <div class="field">
+                    <label class="label">Email</label>
+                    <div class="control">
+                      <input class="input" type="email" placeholder="Empty" v-model="user.email" v-if="save_button">
+                      <input class="input" type="email" placeholder="Empty" v-model="user.email" v-if="!save_button" disabled>
+                    </div>
+                  </div>
+                </div>
+                <div class="column is-3">
+                  <div class="field">
+                    <label class="label">Posted Number</label>
+                    <div class="control">
+                      <input class="input" type="text" placeholder="Posted Number" v-model="user.posts_num" disabled="disabled">
+                    </div>
+                  </div>
+                </div>
+                <div class="column is-3">
+                  <div class="field">
+                    <label class="label">Picked Number</label>
+                    <div class="control">
+                      <input class="input" type="text" placeholder="Picked Number" v-model="user.picks_num" disabled="disabled">
+                    </div>
+                  </div>
+                </div>
+                <div class="column is-3">
+                  <div class="filed">
+                    <label class="label">Status</label>
+                    <div class="control">
+                      <input class="input" type="text" placeholder="Status" v-model="user.is_busy" disabled="disabled">
+                    </div>
+                  </div>
+                </div>
+                <div class="column is-3">
+                  <div class="filed">
+                    <label class="label">Balance</label>
+                    <div class="control">
+                      <input class="input" type="text" placeholder="Balance" v-model="user.balance" disabled="disabled">
+                    </div>
+                  </div>
+                </div>
+                <div class="column is-3">
+                  <div class="filed">
+                    <label class="label">Reputation</label>
+                    <div class="control">
+                      <input class="input" type="text" placeholder="Reputation" v-model="user.reputation" disabled="disabled">
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="column is-12"  id="save-button">
+                  <div class="field mt-3">
+                    <div class="control">
+                      <button class="button is-dark" v-if="!save_button" @click="save_button = !save_button">Modify</button>
+                      <button class="button is-primary" v-if="save_button">Save</button>
+                      <button class="button ml-3" v-if="save_button" @click="save_button = !save_button">Cancel</button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="column is-12">
-        <div class="hero is-warning">
-          <div class="hero-body">
-            <p class="title" id="picked">Picked</p>
+        <div class="column is-12" id="posted">
+          <div class="hero is-info">
+            <div class="hero-body">
+              <div id="title-part">
+                <p class="title is-fullwidth">Posted</p>
+                <router-link to="/post" class="routerlink">
+                  <div class="post-button">
+                    <button class="button is-primary">
+                      <i class="fas fa-plus mr-3"></i>
+                      <span>New Problem</span>
+                    </button>
+                  </div>
+                </router-link>
+              </div>
+              <template v-if="this.posted.length">
+                <div v-for="(item, index) in this.posted" v-bind:key="item.id">
+                  <div class="box mb-3">
+                    <div class="tag">
+                      <span class="has-text-weight-bold mr-2">{{ index+1 }}</span>
+                      <span class="has-text-weight-bold">{{ item.get_tagname }}</span>
+                    </div>
+                    <div class="header-name">
+                      <p>Problem</p>
+                    </div>
+                    <div class="posted-problem-name">
+                      <router-link :to="item.get_absolute_url">{{ item.name }}</router-link>
+                    </div>
+                    <div class="header-name">
+                      <p>Budget</p>
+                    </div>
+                    <div class="posted-problem-budget">
+                      <p>&euro; {{ item.budget }}</p>
+                    </div>
+                    <div class="header-name">
+                      <p>Deadline</p>
+                    </div>
+                    <div class="posted-problem-deadline">
+                      <p>{{ item.deadline }}</p>
+                    </div>
+                    <div class="header-name">
+                      <p>Publish</p>
+                    </div>
+                    <div class="posted-problem-date-posted">
+                      <p>{{ item.date_posted }}</p>
+                    </div>
+                    <div class="header-name">
+                      <p>Status</p>
+                    </div>
+                    <div class="posted-problem-status">
+                      <p>{{ item.status }}</p>
+                    </div>
+                  </div>
+                </div>
+              </template>
+              <template v-else>
+                <div class="box">
+                  <p>You haven't posted any problems till now.</p>
+                </div>
+              </template>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="column is-12">
-        <div class="hero is-primary">
-          <div class="hero-body">
-            <p class="title" id="sum">Summary</p>
+        <div class="column is-12">
+          <div class="hero is-warning">
+            <div class="hero-body">
+              <p class="title" id="picked">Picked</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="column is-12">
+          <div class="hero is-primary">
+            <div class="hero-body">
+              <p class="title" id="sum">Summary</p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </template>
   </div>
 </template>
 
@@ -216,6 +284,8 @@ export default {
           balance: '',
           reputation: '',
         },
+        // Admin Part
+        presessions: [],
       }
     },
     methods: {
@@ -318,11 +388,25 @@ export default {
             })
         this.$store.commit('setIsLoading', false)
       },
+
+      // Admin Part
+      // GET Presessions
+      async getPrecessions() {
+        await axios
+          .get('/api/v1/all-presessions/')
+          .then(response => {
+            this.presessions = response.data
+          })
+          .catch(error => {
+            console.log(error)
+          })
+      }
     },
     mounted() {
         document.title = "My Account | FlyMeCrods"
         this.getUserData()
         this.getUserPostedProblems()
+        this.getPrecessions()
       }
 }
 </script>
@@ -401,7 +485,7 @@ form input{
   transition: all 0.6s;
 }
 
-.tag {
+#posted .tag {
   position: absolute;
   top: 0;
   left: 0;
@@ -425,6 +509,25 @@ form input{
   width: 15%;
   display: flex;
   justify-content: center;
+}
+
+/* Admin Part Below */
+#presession .box {
+  position: relative;
+  display: flex;
+  margin-bottom: 1rem;
+}
+
+#presession .box .tag {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: #363636;
+  color: #fff;
+}
+
+#presession .box p {
+  margin-right: 0.5rem;
 }
 
 @media screen and (max-width: 800px) {

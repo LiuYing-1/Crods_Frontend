@@ -37,6 +37,11 @@ export default createStore({
       localStorage.setItem('tasks', JSON.stringify(state.tasks))
     },
 
+    removeTasks(state, item) {
+      state.tasks.items = []
+      item = null
+    },
+
     setIsLoading(state, status) {
       state.isLoading = status
     },
