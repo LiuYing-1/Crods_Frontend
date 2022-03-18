@@ -47,8 +47,35 @@
                 <div v-for="(item, index) in this.presessions" v-bind:key="item.id">
                   <div class="box">
                     <div class="tag">{{index+1}}</div>
-                    <p>{{item.get_problem_name}}</p>
-                    <p>{{item.get_picker_name}}</p>
+                    <div class="link">
+                      <router-link :to="'/presessions/' + item.id">Presession #{{item.id}}</router-link>
+                    </div>
+                    <p class="module-name"><b>Problem</b></p>
+                    <div class="problem-name">
+                      <p>{{item.get_problem_name}}</p>
+                    </div>
+                    <p class="module-name"><b>Picker</b></p>
+                    <div class="problem-picker">
+                      <p>{{item.get_picker_name}}</p>
+                    </div>
+                    <p class="module-name"><b>Date</b></p>
+                    <div class="date-posted">
+                      <p>{{ item.date_posted }}</p>
+                    </div>
+                    <p class="module-name"><b>Result</b></p>
+                    <div class="presession-result">
+                      <p v-if="item.result == 0">Waiting</p>
+                      <p v-if="item.result == 1">Accept</p>
+                      <p v-if="item.result == 2">Reject</p>
+                    </div>
+                    <p class="module-name"><b>Decision</b></p>
+                    <div class="presession-button">
+                      <button class="button is-primary" v-if="item.result == 0" @click="submitPresession(item, 1)">Accept</button>
+                      <button class="button is-dark ml-4" v-if="item.result == 0" @click="submitPresession(item, 2)">Reject</button>
+                      
+                      <button class="button is-primary" v-if="item.result == 1" disabled>Accepted</button>
+                      <button class="button is-danger" v-if="item.result == 2" disabled>Rejected</button>
+                    </div>
                   </div>
                 </div>
               </template>
@@ -396,11 +423,49 @@ export default {
           .get('/api/v1/all-presessions/')
           .then(response => {
             this.presessions = response.data
+
+            for (let i = 0; i < this.presessions.length; i++){
+              this.presessions[i].date_posted = this.presessions[i].date_posted.split('T')[0]
+            }
+          })
+          .catch(error => {
+            console.log(error)
+          })
+      },
+
+      // Accept Presession
+      submitPresession(presession, result){
+        axios
+          .put('/api/v1/presessions/' + presession.id + '/update/', {
+            result: result,
+            reason: presession.reason,
+          })
+          .then(response => {
+            if (response.data.status == 400) {
+            toast({
+              message: response.data.message,
+              type: 'is-danger',
+              duration: 3000,
+              position: 'bottom-right',
+              dismissible: true
+            })
+              this.presession.result = 0
+            } else if (response.data.status == 201) {
+              toast({
+                message: response.data.message,
+                type: 'is-success',
+                duration: 3000,
+                position: 'bottom-right',
+                dismissible: true
+              })
+              this.$router.push('/my-account')
+            }
           })
           .catch(error => {
             console.log(error)
           })
       }
+
     },
     mounted() {
         document.title = "My Account | FlyMeCrods"
@@ -515,6 +580,7 @@ form input{
 #presession .box {
   position: relative;
   display: flex;
+  align-items: center;
   margin-bottom: 1rem;
 }
 
@@ -528,6 +594,52 @@ form input{
 
 #presession .box p {
   margin-right: 0.5rem;
+}
+
+#presession .box .module-name {
+  width: 3%;
+  color: darkslateblue;
+}
+
+#presession .link, #presession .problem-id, #presession .problem-name, #presession .problem-name, #presession .problem-picker, #presession .date-posted {
+  display: flex;
+}
+
+#presession .link {
+  width: 12%;
+  justify-content: center;
+}
+
+#presession .problem-name {
+  width: 18%;
+  justify-content: center;
+}
+
+#presession .problem-picker {
+  width: 20%;
+  justify-content: center;
+}
+
+#presession .date-posted {
+  width: 10%;
+  justify-content: center;
+}
+
+#presession .presession-result {
+  display: flex;
+  width: 10%;
+  justify-content: center;
+}
+
+#presession .presession-button {
+  display: flex;
+  width: 25%;
+  justify-content: center;
+}
+
+#presession .link a:hover {
+  color: #1f7fce;
+  transition: all 0.4s;
 }
 
 @media screen and (max-width: 800px) {
@@ -558,9 +670,41 @@ form input{
     display: flex;
     justify-content: flex-start;
   }
+  
   .header-name {
     justify-content: flex-start;
     width: 100%;
+  }
+
+  #presession .box {
+    width: 100%;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+
+  #presession .problem-id, #presession .problem-name, #presession .problem-name, #presession .problem-picker, #presession .date-posted, #presession .presession-result {
+    display: flex;
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  #presession .link {
+    width: 100%;
+    margin-bottom: 1rem;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    font-weight: bold;
+    background-color: #363636;
+    color: white;
+    justify-content: center;
+  }
+
+  #presession .presession-button {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    margin-top: 0.5rem;
   }
 }
 </style>

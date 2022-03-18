@@ -88,6 +88,11 @@ const routes = [
     component: () => import(/* webpackChunkName: "checklist" */ '../views/Motivation.vue'),
   },
   {
+    path: '/presessions/:presession_id',
+    name: 'Presession',
+    component: () => import(/* webpackChunkName: "presession" */ '../views/Presession.vue')
+  },
+  {
     path: '/register',
     name: 'Register',
     component: () => import(/* webpackChunkName: "register" */ '../views/Register.vue')
