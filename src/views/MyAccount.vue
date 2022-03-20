@@ -48,7 +48,7 @@
                   <div class="box">
                     <div class="tag">{{index+1}}</div>
                     <div class="link">
-                      <router-link :to="'/presessions/' + item.id">Presession #{{item.id}}</router-link>
+                      <router-link :to="'/presessions/' + item.id"><i class="fas fa-eye mr-2"></i>Presession #{{item.id}}</router-link>
                     </div>
                     <p class="module-name"><b>Problem</b></p>
                     <div class="problem-name">
@@ -170,7 +170,7 @@
                 </div>
                 <div class="column is-3">
                   <div class="filed">
-                    <label class="label">Status</label>
+                    <label class="label">Status (Busy)</label>
                     <div class="control">
                       <input class="input" type="text" placeholder="Status" v-model="user.is_busy" disabled="disabled">
                     </div>
@@ -232,7 +232,7 @@
                       <p>Problem</p>
                     </div>
                     <div class="posted-problem-name">
-                      <router-link :to="item.get_absolute_url">{{ item.name }}</router-link>
+                      <router-link :to="'/problem-edit' + item.get_absolute_url">{{ item.name }}</router-link>
                     </div>
                     <div class="header-name">
                       <p>Budget</p>
@@ -270,10 +270,78 @@
           </div>
         </div>
 
-        <div class="column is-12">
+        <div class="column is-12" id="picked">
           <div class="hero is-warning">
             <div class="hero-body">
-              <p class="title" id="picked">Picked</p>
+              <div class="title-part">
+                <p class="title">Picked</p>
+                <router-link to="/marketplace">
+                  <div class="marketplace-button">
+                    <button class="button is-dark marketplace">
+                      <span>Marketplace</span>
+                    </button>
+                  </div>
+                </router-link>
+              </div>
+              <template v-if="this.picked.length">
+                <div v-for="(item, index) in this.picked" v-bind:key="item.id">
+                  <div class="box mb-3">
+                    <div class="tag">{{index+1}}</div>
+                    <div class="module-part">
+                      <p><b>Problem</b></p>
+                    </div>
+                    <div class="problem-name">
+                      <router-link :to="{ path: '/solution' + item.get_problem_absolute_url, query: {id: item.id} }">{{ item.get_problem_name }}</router-link>
+                    </div>
+                    <div class="module-part">
+                      <p><b>Accepted</b></p>
+                    </div>
+                    <div class="date-result">
+                      {{ item.get_presession_date }}
+                    </div>
+                    <div class="module-part">
+                      <p><b>Deadline</b></p>
+                    </div>
+                    <div class="deadline">
+                      {{ item.get_problem_deadline }}
+                    </div>
+                    <div class="module-part">
+                      <p><b>Status</b></p>
+                    </div>
+                    <div class="result-status">
+                      {{ item.solution_result }}
+                    </div>
+                    
+                    <div class="module-part">
+                      <p><b>Portal</b></p>
+                    </div>
+
+                    <div class="picked-button">
+                      <router-link :to="{path: '/solution' + item.get_problem_absolute_url, query: {id: item.id} }">
+                        <button class="button is-dark" v-if="item.solution_result == 'In Progress'">
+                          <i class="fas fa-edit mr-3"></i>
+                          <span>Edit</span>
+                        </button>
+                      </router-link>
+
+                      <button class="button is-primary" v-if="item.solution_result == 'Accepted'" disabled>
+                        <i class="fas fa-lock mr-3"></i>
+                        <span>Completed</span>
+                      </button>
+
+                      <button class="button is-danger" v-if="item.solution_result == 'Rejected'" disabled>
+                        <i class="fas fa-lock mr-3"></i>
+                        <span>Completed</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </template>
+              <template v-else>
+                <div class="box">
+                  <p>You haven't picked any problems till now.</p>
+                </div>
+              </template>
             </div>
           </div>
         </div>
@@ -311,6 +379,7 @@ export default {
           balance: '',
           reputation: '',
         },
+        picked: [],
         // Admin Part
         presessions: [],
       }
@@ -396,8 +465,6 @@ export default {
               this.posted = response.data
               
               for (let i = 0; i < this.posted.length; i++) {
-                // Assign to specific page for problems
-                this.posted[i].get_absolute_url = '/my-account/problem-edit' + this.posted[i].get_absolute_url
                 // Convert to readable format
                 this.posted[i].deadline = this.posted[i].deadline.split('T')[0]
                 this.posted[i].date_posted = this.posted[i].date_posted.split('T')[0]
@@ -414,6 +481,30 @@ export default {
               console.log(error)
             })
         this.$store.commit('setIsLoading', false)
+      },
+
+      getUserSolutions(){
+        const user_id =  localStorage.getItem('userid')
+
+        axios
+          .get(`/api/v1/solutions/${user_id}/`)
+          .then(response => {
+            this.picked = response.data
+            for (let i = 0; i < this.picked.length; i++) {
+              this.picked[i].get_presession_date = this.picked[i].get_presession_date.split('T')[0]
+              this.picked[i].get_problem_deadline = this.picked[i].get_problem_deadline.split('T')[0]
+              if (this.picked[i].solution_result == 0) {
+                this.picked[i].solution_result = 'In Progress'
+              } else if (this.picked[i].solution_result == 1) {
+                this.picked[i].solution_result = 'Accepted'
+              } else {
+                this.picked[i].solution_result = 'Rejected'
+              }
+            }
+          })
+          .catch(error => {
+            console.log(error)
+          })
       },
 
       // Admin Part
@@ -472,6 +563,7 @@ export default {
         this.getUserData()
         this.getUserPostedProblems()
         this.getPrecessions()
+        this.getUserSolutions()
       }
 }
 </script>
@@ -556,7 +648,6 @@ form input{
   left: 0;
   background-color: #fff;
   padding: 0.2rem 0.5rem;
-  border-radius: 0.5rem;
   font-size: 0.8rem;
   font-weight: bold;
   color: #000;
@@ -574,6 +665,81 @@ form input{
   width: 15%;
   display: flex;
   justify-content: center;
+}
+
+#picked .hero-body .title-part {
+  position: relative;
+}
+
+#picked .marketplace {
+  position: absolute;
+  background-color: #f0a5;
+  top: 0;
+  right: 0;
+}
+
+#picked .marketplace:hover {
+  background-color: #1f7fce;
+  transition: all 0.6s;
+}
+
+#picked .box {
+  position: relative;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+#picked .tag {
+  top: 0;
+  left: 0;
+  color: white;
+  position: absolute;
+  background-color: #363636;
+}
+
+#picked .box .module-part {
+  width: 5%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#picked .box .problem-name, #picked .box .date-result, #picked .box .deadline, #picked .box .result-status, #picked .box .picked-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#picked .box .problem-name {
+  width: 15%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#picked .box .problem-name a:hover {
+  color: #f0a5;
+  transition: all 0.6s;
+}
+
+#picked .box .date-result {
+  width: 15%;
+}
+
+#picked .box .deadline {
+  width: 15%;
+}
+
+#picked .box .result-status {
+  width: 15%;
+}
+
+#picked .box .picked-button {
+  width: 15%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* Admin Part Below */
@@ -606,7 +772,7 @@ form input{
 }
 
 #presession .link {
-  width: 12%;
+  width: 15%;
   justify-content: center;
 }
 
@@ -633,7 +799,7 @@ form input{
 
 #presession .presession-button {
   display: flex;
-  width: 25%;
+  width: 22%;
   justify-content: center;
 }
 
@@ -705,6 +871,25 @@ form input{
     width: 100%;
     justify-content: center;
     margin-top: 0.5rem;
+  }
+
+  #picked .box {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+  
+  #picked .box .module-part, #picked .box .problem-name, #picked .box .date-result, #picked .box .deadline, #picked .box .result-status {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  #picked .box .picked-button {
+    width: 100%;
+    display: flex;
+    justify-content: center;
   }
 }
 </style>

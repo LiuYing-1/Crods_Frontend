@@ -98,7 +98,9 @@
 
           <div class="field">
             <div class="control">
-              <a class="button is-dark" @click="addToTasks">Add to Task List</a>
+              <a class="button is-dark" @click="addToTasks" v-if="problem.status == 'Unaccepted'">Add to Task List</a>
+              <a class="button is-danger" disabled v-if="problem.status == 'In Progress'">In Progress</a>
+              <a class="button is-dark" disabled v-if="problem.status == 'Completed'">Completed</a>
               <a class="button" id="back" @click="goBack">Back</a>
             </div>
           </div>
@@ -210,7 +212,7 @@ export default {
 
 .button {
   place-content: center;
-  margin: 2rem 1rem;
+  margin: 1rem 1rem;
 }
 
 #back {

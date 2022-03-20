@@ -111,9 +111,14 @@ const routes = [
     }
   },
   {
-    path: '/my-account/problem-edit/:tag_slug/:problem_slug',
+    path: '/problem-edit/:tag_slug/:problem_slug',
     name: 'ProblemEdit',
     component: () => import(/* webpackChunkName: "my-account" */ '../views/ProblemEdit.vue'),
+  },
+  {
+    path: '/solution/:tag_slug/:problem_slug',
+    name: 'Solution',
+    component: () => import(/* webpackChunkName: "my-account" */ '../views/Solution.vue'),
   },
   {
     path: '/404',

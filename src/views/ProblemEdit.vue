@@ -3,7 +3,7 @@
     <nav class="breadcrumb has-succeeds-separator" aria-label="breadcrumbs">
       <ul>
         <li><router-link to="/">FlyMeCrods</router-link></li>
-        <li><router-link to="/my-account">{{ problem.get_username }}</router-link></li>
+        <li><router-link to="/my-account">My Account</router-link></li>
         <li class="is-active"><router-link to="#" aria-current="page">Problem Management</router-link></li>
       </ul>
     </nav>  
@@ -18,10 +18,10 @@
           <div class="image">
             <img :src="require('@/assets/universities_inline.png')" alt="universities">
           </div>
-          <div class="content mt-6">
+          <div class="content">
             <p class="is-size-4"><b>Page Instructor</b></p>
-            <p class="is-size-5"><a href="#edit-part">Edit</a></p>
-            <p class="is-size-5"><a href="#progress-part">Progress</a></p>
+            <p class="is-size-5"><a href="#edit-part"><i class="fas fa-edit mr-3"></i>Edit</a></p>
+            <p class="is-size-5"><a href="#progress-part"><i class="far fa-calendar-check mr-3"></i>Progress</a></p>
           </div>
         </div>
       </div>
@@ -276,6 +276,10 @@ form label, form select .option {
   align-items: center;
   border-radius: 0.5rem;
   background-image: linear-gradient(45deg, #363636, #4bbca9);
+}
+
+#page-index .content {
+  margin-top: 1rem;
 }
 
 #page-index .content a {
