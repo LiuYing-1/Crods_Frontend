@@ -294,7 +294,7 @@
                       <router-link :to="{ path: '/solution' + item.get_problem_absolute_url, query: {id: item.id} }">{{ item.get_problem_name }}</router-link>
                     </div>
                     <div class="module-part">
-                      <p><b>Accepted</b></p>
+                      <p><b>PreAccepted</b></p>
                     </div>
                     <div class="date-result">
                       {{ item.get_presession_date }}
@@ -321,6 +321,13 @@
                         <button class="button is-dark" v-if="item.solution_result == 'In Progress'">
                           <i class="fas fa-edit mr-3"></i>
                           <span>Edit</span>
+                        </button>
+                      </router-link>
+                      
+                      <router-link :to="{path: '/solution' + item.get_problem_absolute_url, query: {id: item.id} }">
+                        <button class="button is-dark" v-if="item.solution_result == 'Submitted'">
+                          <i class="fas fa-reply-all mr-3"></i>
+                          <span>Submitted</span>
                         </button>
                       </router-link>
 
@@ -496,8 +503,10 @@ export default {
               if (this.picked[i].solution_result == 0) {
                 this.picked[i].solution_result = 'In Progress'
               } else if (this.picked[i].solution_result == 1) {
+                this.picked[i].solution_result = 'Submitted'
+              } else if (this.picked[i].solution_result == 2) {
                 this.picked[i].solution_result = 'Accepted'
-              } else {
+              } else if (this.picked[i].solution_result == 3) {
                 this.picked[i].solution_result = 'Rejected'
               }
             }

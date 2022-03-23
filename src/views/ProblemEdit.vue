@@ -134,16 +134,132 @@
 
                 <div class="column is-12 has-text-centered">
                   <template v-if="!edit_button">
-                    <button class="button is-danger" @click="edit_button = !edit_button">Edit</button>
+                    <button class="button is-danger" @click="edit_button = !edit_button" v-if="problem.status==0">Edit</button>
+                    <button class="button is-danger" @click="edit_button = !edit_button" v-if="problem.status!=0" disabled>Edit</button>
                   </template>
 
-                  <template v-if="edit_button">
+                  <template v-else>
                     <button class="button is-primary">Save</button>
                     <button class="button is-light ml-3" @click="edit_button = !edit_button">Cancel</button>
                   </template>
                 </div>
               </div>
             </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="column is-12" id="progress-part">
+        <div class="hero is-info">
+          <div class="hero-body">
+            <p class="title">Progress</p>
+            <div class="columns is-multiline">
+              <template v-if="this.solution.id == null">
+                <div class="column is-12">
+                  <div class="box">
+                    <p>Sorry, Sir/Madam, there is no solution yet.</p>
+                  </div>
+                </div>
+              </template>
+              <template v-else>
+                <div class="column is-12">
+                  <div class="columns is-multiline">
+                    <div class="column is-12">
+                      <p>
+                        <span>Your problem has been picked by </span>
+                        <span><b>{{ this.solution.get_username }}</b>,</span>
+                        <span> and is currently being worked on.</span>
+                      </p>
+                    </div>
+                    <div class="column is-12">
+                      <div class="subtitle"><b>Solution</b></div>
+                    </div>
+                    <div class="column is-12">
+                      <div class="solution-text">
+                        <label class="label"><b>Answer in the Text format</b></label>
+                        <textarea class="textarea" v-model="this.solution.text_solution" placeholder="The author hasn't pushed any solution here." disabled></textarea>
+                      </div>
+                    </div>
+                    <div class="column is-12">
+                      <div class="solution_notice">
+                        <label class="label"><b>Notice</b></label>
+                        <textarea class="textarea" v-model="this.solution.notice" placeholder="The author hasn't pushed any notice here." disabled></textarea>
+                      </div>
+                    </div>
+                    <div class="column is-12">
+                      <label class="label">Attachment / Enclosure</label>
+                      <div class="attachment-part" v-if="this.fileName == ''">
+                        <p>No attachment</p>
+                      </div>
+                      <div class="attachment-part" v-else>
+                        <p>{{ this.fileName }}</p>
+                        <div class="buttons">
+                          <button class="button is-dark">
+                            <a :href="this.rootUrl + this.solution.file_solution" target="_blank">
+                              <span><i class="far fa-eye mr-3"></i></span>
+                              <span>Preview</span>
+                            </a>
+                          </button>
+                          <button class="button is-light ml-3" v-if="this.solution.solution_result == 2">
+                            <a :href="this.rootUrl + this.solution.file_solution" download target="_blank">
+                              <span><i class="fas fa-unlock mr-3"></i></span>
+                              <span>Download</span>
+                            </a>
+                          </button>
+                          <button class="button is-light ml-3" v-else disabled>
+                            <span><i class="fas fa-lock mr-3"></i></span>
+                            <span>Download</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="column is-12" v-if="this.solution.solution_result == 1">
+                      <div class="box">
+                        <div id="line-1">
+                          <div class="result-content">
+                            <p>Please give your reply to the solution.</p>
+                          </div>
+                          <div class="buttons">
+                            <button class="button is-primary" @click="updateSolutionResult(2)" v-if="this.problem.status != 2">
+                              <span><i class="fas fa-check mr-3"></i></span>
+                              <span>Accept</span>
+                            </button>
+                            <button class="button is-danger" @click="updateSolutionResult(3)" v-if="this.problem.status != 2">
+                              <span><i class="fas fa-times mr-3"></i></span>
+                              <span>Reject</span>
+                            </button>
+
+                            <button class="button is-dark" disabled v-if="this.problem.status == 2">Completed</button>
+                          </div>
+                        </div>
+                        <hr>
+                        <div id="line-2">
+                          <div class="field">
+                            <label class="label"><b>Feedback</b></label>
+                            <textarea class="textarea" v-model="this.solution.feedback" placeholder="Please give your feedback here."></textarea>
+                          </div>
+                          <div class="field">
+                            <label class="label"><b>Rating the Picker</b></label>
+                            <div class="stars">
+                              <input type="radio" id="star-5" class="star star-5" name="star" @click="ratingStar(5)"/>
+                              <label for="star-5" class="star star-5"></label>
+                              <input type="radio" id="star-4" class="star star-4" name="star" @click="ratingStar(4)"/>
+                              <label for="star-4" class="star star-4"></label>
+                              <input type="radio" id="star-3" class="star star-3" name="star" @click="ratingStar(3)"/>
+                              <label for="star-3" class="star star-3"></label>
+                              <input type="radio" id="star-2" class="star star-2" name="star" @click="ratingStar(2)"/>
+                              <label for="star-2" class="star star-2"></label>
+                              <input type="radio" id="star-1" class="star star-1" name="star" @click="ratingStar(1)"/>
+                              <label for="star-1" class="star star-1"></label>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </div>
           </div>
         </div>
       </div>
@@ -162,6 +278,10 @@ export default {
       problem: {},
       remaining: 0,
       edit_button: false,
+      solution: {},
+      fileName: '',
+      rating: 0,
+      rootUrl: 'http://localhost:8000',
     }
   },
   methods: {
@@ -183,6 +303,18 @@ export default {
           // Convert date to readable date object and there is 8 hours difference
           var dateTime = new Date(+ new Date(this.problem.deadline) + 8 * 3600 * 1000)
           this.problem.deadline = new Date(dateTime).toISOString().substr(0, 10)
+
+          // Get Solution
+          axios
+            .get(`api/v1/solutions/problem/${this.problem.id}`)
+            .then(response => {
+              this.solution = response.data
+
+              this.fileName = this.solution.file_solution.split('/').pop()
+            })
+            .catch(error => {
+              console.log(error)
+            })
         })
         .catch(error => {
           console.log(error)
@@ -222,6 +354,14 @@ export default {
           console.log(error)
         })
       this.$store.commit('setIsLoading', false)
+    },
+
+    updateSolutionResult(i) {
+      console.log(i)
+    },
+
+    ratingStar(i) {
+      this.rating = i
     },
   },
   mounted() {
@@ -314,6 +454,94 @@ form #tag {
   width: 10%;
 }
 
+#progress-part textarea {
+  font-family: 'Noto Serif Display', serif;
+}
+
+#progress-part .box #line-1 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#progress-part .box #line-2 {
+  display: flex;
+}
+
+#progress-part .box #line-2 .field:first-child {
+  width: 75%;
+  height: 100%;
+}
+
+#progress-part .box #line-2 .field:first-child textarea:focus {
+  background-color: darkgrey;
+  color: white;
+  transition: all 0.6s;
+}
+
+#progress-part .box #line-2 .field:last-child {
+  width: 25%;
+  height: 100%;
+  margin-left: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.attachment-part {
+  display: flex;
+  align-items: center;
+}
+
+.attachment-part .buttons {
+  margin-left: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+/* Rating Star */
+div.stars {
+  width: 270px;
+  display: inline-block;
+}
+
+input.star {
+  display: none;
+}
+
+label.star {
+  cursor: pointer;
+  float: right;
+  padding: 10px;
+  font-size: 36px;
+  color: #444;
+  transition: all .2s;
+}
+
+input.star:checked ~ label.star:before {
+  content: '\f005';
+  color: #FD4;
+  transition: all .25s;
+}
+
+input.star-5:checked ~ label.star:before {
+  color: #FE7;
+  text-shadow: 0 0 20px #952;
+}
+
+input.star-1:checked ~ label.star:before {
+  color: #F62;
+}
+
+label.star:hover {
+  transform: rotate(-15deg) scale(1.3);
+}
+
+label.star:before {
+  content: '\f006';
+  font-family: FontAwesome;
+}
+
 @media screen and (max-width: 800px) {
   form {
     display: flex;
@@ -322,6 +550,38 @@ form #tag {
 
   form #name, form #budget, form #deadline {
     width: 40%;
+  }
+
+  #progress-part .box #line-1 {
+    flex-direction: column;
+  }
+
+  #progress-part .box .buttons {
+    margin-top: 1rem;
+  }
+
+  #progress-part .box #line-2 {
+    flex-direction: column;
+  }
+
+  #progress-part .box #line-2 .field:first-child {
+    width: 100%;
+    height: 100%;
+  }
+
+  #progress-part .box #line-2 .field:last-child {
+    width: 100%;
+    height: 100%;
+    margin-left: 0;
+  }
+
+  .attachment-part {
+    flex-direction: column;
+  }
+
+  .attachment-part .buttons {
+    margin-top: 1rem;
+    margin-left: 0;
   }
 }
 </style>
