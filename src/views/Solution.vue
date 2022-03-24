@@ -36,6 +36,7 @@
                     <div class="field">
                       <label class="label"><b>* Your Answer in Text Format</b></label>
                       <div class="control">
+                        <textarea class="textarea" placeholder="Please state your answer here." v-model="this.solution.text_solution" disabled v-if="(solution.solution_result==2)||(solution.solution_result==3)"></textarea>
                         <textarea class="textarea" placeholder="Please state your answer here." v-model="this.solution.text_solution" disabled v-if="!edit_button && solution.solution_result==1"></textarea>
                         <textarea class="textarea" placeholder="Please state your answer here." v-model="this.solution.text_solution" v-if="edit_button || solution.solution_result==0"></textarea>
                       </div>
@@ -70,6 +71,7 @@
                     <div class="field">
                       <label class="label"><b>* Note</b></label>
                       <div class="control">
+                        <textarea class="textarea" placeholder="Please state your notice here." v-model="this.solution.notice" disabled v-if="(solution.solution_result==2)||(solution.solution_result==3)"></textarea>
                         <textarea class="textarea" placeholder="Please state your notice here." v-model="this.solution.notice" disabled v-if="!edit_button && solution.solution_result==1"></textarea>
                         <textarea class="textarea" placeholder="Please state your notice here." v-model="this.solution.notice" v-if="edit_button || solution.solution_result==0"></textarea>
                       </div>
@@ -294,7 +296,7 @@ export default {
               if (this.edit_button == true) {
                 this.edit_button = !this.edit_button
               } else {
-                this.$router.push('/success')
+                location.reload()
               }
             } else {
               toast({

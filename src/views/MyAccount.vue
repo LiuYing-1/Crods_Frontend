@@ -86,7 +86,16 @@
           <div class="hero is-warning">
             <div class="hero-body">
               <div class="title">Distribution</div>
-
+              <template v-if="this.distributions.length == 0">
+                <div class="box">Sorry, there is no distributions here.</div>
+              </template>
+              <template v-else>
+                <div v-for="(item, index) in this.distributions" v-bind:key="item.id">
+                  <div class="box">
+                    <div class="tag">{{index+1}}</div>
+                  </div>
+                </div>
+              </template>
             </div>
           </div>
         </div>
@@ -389,6 +398,7 @@ export default {
         picked: [],
         // Admin Part
         presessions: [],
+        distributions: [],
       }
     },
     methods: {
@@ -533,7 +543,7 @@ export default {
           })
       },
 
-      // Accept Presession
+      // Process Presession
       submitPresession(presession, result){
         axios
           .put('/api/v1/presessions/' + presession.id + '/update/', {
@@ -558,14 +568,28 @@ export default {
                 position: 'bottom-right',
                 dismissible: true
               })
-              this.$router.push('/my-account')
+
+              // Reload the page
+              location.reload()
             }
           })
           .catch(error => {
             console.log(error)
           })
-      }
+      },
 
+      // Admin - Distribution Part
+      getDistributions() {
+        axios
+          .get('api/v1/all-distributions/')
+          .then(response => {
+            this.distributions = response.data
+            console.log(response)
+          })
+          .catch(error => {
+            console.log(error)
+          })
+      }
     },
     mounted() {
         document.title = "My Account | FlyMeCrods"
@@ -573,6 +597,7 @@ export default {
         this.getUserPostedProblems()
         this.getPrecessions()
         this.getUserSolutions()
+        this.getDistributions()
       }
 }
 </script>
@@ -815,6 +840,10 @@ form input{
 #presession .link a:hover {
   color: #1f7fce;
   transition: all 0.4s;
+}
+
+#distribution .box {
+  margin-bottom: 1rem;
 }
 
 @media screen and (max-width: 800px) {

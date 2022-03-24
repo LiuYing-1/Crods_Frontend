@@ -213,7 +213,7 @@
                         </div>
                       </div>
                     </div>
-                    <div class="column is-12" v-if="this.solution.solution_result == 1">
+                    <div class="column is-12" v-if="this.solution.solution_result != 0">
                       <div class="box">
                         <div id="line-1">
                           <div class="result-content">
@@ -229,29 +229,48 @@
                               <span>Reject</span>
                             </button>
 
-                            <button class="button is-dark" disabled v-if="this.problem.status == 2">Completed</button>
+                            <!-- Lock the button to be disabled -->
+                            <button class="button is-primary" disabled v-if="this.problem.status == 2 && this.solution.solution_result == 2">
+                              <span><i class="fas fa-check mr-3"></i></span>
+                              <span>Accepted</span>
+                            </button>
+                            <button class="button is-danger" disabled v-if="this.problem.status == 2 && this.solution.solution_result == 3">
+                              <span><i class="fas fa-check mr-3"></i></span>
+                              <span>Rejected</span>
+                            </button>
                           </div>
                         </div>
                         <hr>
                         <div id="line-2">
                           <div class="field">
                             <label class="label"><b>Feedback</b></label>
-                            <textarea class="textarea" v-model="this.solution.feedback" placeholder="Please give your feedback here."></textarea>
+                            <textarea class="textarea" v-model="this.solution.solution_feedback" placeholder="Please give your feedback here." v-if="this.problem.status != 2"></textarea>
+                            <textarea class="textarea" v-model="this.solution.solution_feedback" placeholder="Please give your feedback here." disabled v-if="this.problem.status == 2"></textarea>
                           </div>
                           <div class="field">
-                            <label class="label"><b>Rating the Picker</b></label>
+                            <label class="label"><b>* Rating the Picker</b></label>
                             <div class="stars">
-                              <input type="radio" id="star-5" class="star star-5" name="star" @click="ratingStar(5)"/>
+                              <input type="radio" id="star-5" class="star star-5" name="star" @click="ratingStar(5)" v-if="this.problem.status != 2"/>
+                              <input type="radio" id="star-5" class="star star-5" name="star" @click="ratingStar(5)" disabled v-if="this.problem.status == 2"/>
                               <label for="star-5" class="star star-5"></label>
-                              <input type="radio" id="star-4" class="star star-4" name="star" @click="ratingStar(4)"/>
+                              <input type="radio" id="star-4" class="star star-4" name="star" @click="ratingStar(4)" v-if="this.problem.status != 2"/>
+                              <input type="radio" id="star-4" class="star star-4" name="star" @click="ratingStar(4)" disabled v-if="this.problem.status == 2"/>
                               <label for="star-4" class="star star-4"></label>
-                              <input type="radio" id="star-3" class="star star-3" name="star" @click="ratingStar(3)"/>
+                              <input type="radio" id="star-3" class="star star-3" name="star" @click="ratingStar(3)" v-if="this.problem.status != 2"/>
+                              <input type="radio" id="star-3" class="star star-3" name="star" @click="ratingStar(3)" disabled v-if="this.problem.status == 2"/>
                               <label for="star-3" class="star star-3"></label>
-                              <input type="radio" id="star-2" class="star star-2" name="star" @click="ratingStar(2)"/>
+                              <input type="radio" id="star-2" class="star star-2" name="star" @click="ratingStar(2)" v-if="this.problem.status != 2"/>
+                              <input type="radio" id="star-2" class="star star-2" name="star" @click="ratingStar(2)" disabled v-if="this.problem.status == 2"/>
                               <label for="star-2" class="star star-2"></label>
-                              <input type="radio" id="star-1" class="star star-1" name="star" @click="ratingStar(1)"/>
+                              <input type="radio" id="star-1" class="star star-1" name="star" @click="ratingStar(1)" v-if="this.problem.status != 2"/>
+                              <input type="radio" id="star-1" class="star star-1" name="star" @click="ratingStar(1)" disabled v-if="this.problem.status == 2"/>
                               <label for="star-1" class="star star-1"></label>
                             </div>
+                          </div>
+                        </div>
+                        <div class="column is-12">
+                          <div class="notification is-danger" v-if="errors.length">
+                            <p v-for="error in errors" v-bind:key="error">{{ error }}</p>
                           </div>
                         </div>
                       </div>
@@ -282,6 +301,7 @@ export default {
       fileName: '',
       rating: 0,
       rootUrl: 'http://localhost:8000',
+      errors: [],
     }
   },
   methods: {
@@ -357,7 +377,46 @@ export default {
     },
 
     updateSolutionResult(i) {
-      console.log(i)
+      var feedback = this.solution.solution_feedback
+      var picker = this.solution.get_username
+      var rating = this.rating
+
+      this.errors = []
+
+        if (rating === 0) {
+            this.errors.push('Rating is missing!')
+        }
+
+        // Align the default feedback, if poster doesn't fill it out
+        if (!this.errors.length) {
+          if ((feedback == null||feedback == '') && (i == 2)) {
+            feedback = 'Default Feedback: Thanks for your help! Your fee will be distributed to your account by FlyMeCrods in several days.'
+          }
+          if ((feedback == null||feedback == '') && (i == 3)){
+            feedback = 'Default Feedback: Sorry, I am not satisfied with your solution. You will not get the corresponding payment.'
+          }
+
+          let dataSent = {
+            'problem_id': this.problem.id,
+            'solution_id': this.solution.id, 
+            'feedback': feedback,
+            'picker_name': picker,
+            'rating': rating,
+            'result': i,
+          }
+          console.log(feedback)
+          axios
+            .post('api/v1/distributions/post/', dataSent)
+            .then(response => {
+              console.log(response.data.distribution)
+              this.picker_rating = response.data.picker_rating
+
+              location.reload()
+            })
+            .catch(error => {
+              console.log(error)
+            })
+        } 
     },
 
     ratingStar(i) {
