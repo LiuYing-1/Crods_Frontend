@@ -135,7 +135,8 @@
             </div>
             <div class="column is-6">
               <p><b>Remaining</b></p>
-              <p>{{ this.remaining }} day(s)</p>
+              <p v-if="this.problem.status!=2">{{ this.remaining }} day(s)</p>
+              <p v-if="this.problem.status==2">Ended</p>
             </div>
             <div class="column is-6">
               <p><b>Poster</b></p>
@@ -197,7 +198,12 @@ export default {
           // Get remaining
           let end_time = new Date(this.problem.deadline)
           let now = new Date()
-          this.remaining = Math.floor((end_time - now) / (1000 * 60 * 60 * 24))
+          // Check whether the deadline has passed
+          if(now > end_time) {
+            this.remaining = 0
+          } else {
+            this.remaining = Math.floor((end_time - now) / (1000 * 60 * 60 * 24))
+          }
         })
         .catch(error => {
           console.log(error);

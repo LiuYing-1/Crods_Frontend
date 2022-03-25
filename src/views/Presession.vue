@@ -55,7 +55,8 @@
               <hr>
               <p>
                 <span><b>Remaining</b></span>
-                <span class="ml-4">{{ this.remaining }} days</span>
+                <span class="ml-4" v-if="this.problem.status!=2">{{ this.remaining }} days</span>
+                <span class="ml-4" v-if="this.problem.status==2">Ended</span>
               </p>
             </div>
           </div>
@@ -176,7 +177,11 @@ export default {
 
               let end_time = new Date(this.problem.deadline)
               let now = new Date()
-              this.remaining = Math.floor((end_time - now) / (1000 * 60 * 60 * 24))
+              if (now > end_time) {
+                this.remaining = 0
+              } else {
+                this.remaining = Math.floor((end_time - now) / (1000 * 60 * 60 * 24))
+              }
             })
             .catch(error => {
               console.log(error)

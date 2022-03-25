@@ -98,7 +98,8 @@
 
           <div class="field">
             <div class="control">
-              <a class="button is-dark" @click="addToTasks" v-if="problem.status == 'Unaccepted'">Add to Task List</a>
+              <a class="button is-dark" @click="addToTasks" v-if="problem.status == 'Unaccepted' && !this.expired">Add to Task List</a>
+              <a class="button is-dark" @click="addToTasks" v-if="problem.status == 'Unaccepted' && this.expired" disabled>Expired</a>
               <a class="button is-danger" disabled v-if="problem.status == 'In Progress'">In Progress</a>
               <a class="button is-dark" disabled v-if="problem.status == 'Completed'">Completed</a>
               <a class="button" id="back" @click="goBack">Back</a>
@@ -119,6 +120,7 @@ export default {
     data() {
         return {
             problem: {},
+            expired: false,
         }
     },
     mounted() {
@@ -145,6 +147,11 @@ export default {
                         this.problem.status = 'In Progress'
                     } else {
                         this.problem.status = 'Completed'
+                    }
+
+                    // Check whether the problem is expired
+                    if (this.problem.deadline < new Date().toISOString().split('T')[0]) {
+                        this.expired = true
                     }
 
                     document.title = this.problem.name + ' | FlyMeCrods'

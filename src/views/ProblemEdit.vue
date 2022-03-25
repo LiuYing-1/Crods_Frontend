@@ -40,7 +40,8 @@
         <div class="hero is-dark">
           <div class="hero-body">
             <p class="title">Detailed Info</p>
-            <p id="remaining-time">Remaining: {{ this.remaining }} days</p>
+            <p class="remaining-time" v-if="this.problem.status!=2">Remaining: {{ this.remaining }} days</p>
+            <p class="remaining-time" v-if="this.problem.status==2">Remaining: Ended</p>
             <form @submit.prevent="submitForm">
               <div class="columns is-multiline">
                 <div class="column is-2" id="name">
@@ -318,7 +319,12 @@ export default {
           // Get remaining
           let end_time = new Date(this.problem.deadline)
           let now = new Date()
-          this.remaining = Math.floor((end_time - now) / (1000 * 60 * 60 * 24))
+          // Check whether the deadline is passed
+          if (end_time < now) {
+            this.remaining = 0
+          } else {
+            this.remaining = Math.floor((end_time - now) / (1000 * 60 * 60 * 24))
+          }
 
           // Convert date to readable date object and there is 8 hours difference
           var dateTime = new Date(+ new Date(this.problem.deadline) + 8 * 3600 * 1000)
@@ -330,7 +336,9 @@ export default {
             .then(response => {
               this.solution = response.data
 
-              this.fileName = this.solution.file_solution.split('/').pop()
+              if (this.solution.file_solution != null) {
+                this.fileName = this.solution.file_solution.split('/').pop()
+              }
             })
             .catch(error => {
               console.log(error)
@@ -408,9 +416,7 @@ export default {
           axios
             .post('api/v1/distributions/post/', dataSent)
             .then(response => {
-              console.log(response.data.distribution)
-              this.picker_rating = response.data.picker_rating
-
+              console.log(response.data)
               location.reload()
             })
             .catch(error => {
@@ -502,7 +508,7 @@ form {
   position: relative;
 }
 
-#remaining-time {
+.remaining-time {
   position: absolute;
   top: 1rem;
   right: 1rem;

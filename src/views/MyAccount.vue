@@ -93,6 +93,30 @@
                 <div v-for="(item, index) in this.distributions" v-bind:key="item.id">
                   <div class="box">
                     <div class="tag">{{index+1}}</div>
+                    <div class="link">
+                      <router-link :to="'/distributions/' + item.id"><i class="fas fa-eye mr-2"></i>Distribution #{{item.id}}</router-link>
+                    </div>
+                    <p class="module-name"><b>Problem</b></p>
+                    <div class="problem-name">
+                      <p>{{item.get_problem_name}}</p>
+                    </div>
+                    <p class="module-name"><b>Poster</b></p>
+                    <div class="problem-poster">
+                      <p>{{item.get_poster_name}}</p>
+                    </div>
+                    <p class="module-name"><b>Date</b></p>
+                    <div class="date-posted">
+                      <p>{{ item.date_posted }}</p>
+                    </div>
+                    <p class="module-name"><b>Budget</b></p>
+                    <div class="problem-budget">
+                      <p>&euro; {{ item.get_problem_budget }}</p>
+                    </div>
+                    <p class="module-name"><b>Status</b></p>
+                    <div class="distribution-button">
+                      <button class="button is-primary" v-if="item.result==0">Distribute</button>
+                      <button class="button is-dark" disabled v-if="item.result==1">Done</button>
+                    </div>
                   </div>
                 </div>
               </template>
@@ -584,7 +608,10 @@ export default {
           .get('api/v1/all-distributions/')
           .then(response => {
             this.distributions = response.data
-            console.log(response)
+            
+            for (let i = 0; i < this.distributions.length; i++) {
+              this.distributions[i].date_posted = this.distributions[i].date_posted.split('T')[0]
+            }
           })
           .catch(error => {
             console.log(error)
@@ -843,7 +870,68 @@ form input{
 }
 
 #distribution .box {
+  position: relative;
+  display: flex;
+  align-items: center;
   margin-bottom: 1rem;
+}
+
+#distribution .box .tag {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: #363636;
+  color: #fff;
+}
+
+#distribution .box p {
+  margin-right: 0.5rem;
+}
+
+#distribution .box .module-name {
+  width: 3%;
+  color: darkslateblue;
+}
+
+#distribution .link, #distribution .problem-name, #distribution .problem-poster, #distribution .date-posted {
+  display: flex;
+}
+
+#distribution .link {
+  width: 15%;
+  justify-content: center;
+}
+
+#distribution .problem-name {
+  width: 18%;
+  justify-content: center;
+}
+
+#distribution .problem-poster {
+  width: 20%;
+  justify-content: center;
+}
+
+#distribution .date-posted {
+  width: 10%;
+  justify-content: center;
+}
+
+#distribution .problem-budget {
+  display: flex;
+  width: 10%;
+  justify-content: center;
+}
+
+#distribution .distribution-button {
+  display: flex;
+  width: 22%;
+  justify-content: center;
+}
+
+#distribution .link a:hover {
+  color: #1f7fce;
+  transition: all 0.4s;
 }
 
 @media screen and (max-width: 800px) {
@@ -887,7 +975,7 @@ form input{
     align-items: flex-start;
   }
 
-  #presession .problem-id, #presession .problem-name, #presession .problem-name, #presession .problem-picker, #presession .date-posted, #presession .presession-result {
+  #presession .problem-id, #presession .problem-name, #presession .problem-picker, #presession .date-posted, #presession .presession-result {
     display: flex;
     width: 100%;
     justify-content: flex-start;
@@ -905,6 +993,37 @@ form input{
   }
 
   #presession .presession-button {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    margin-top: 0.5rem;
+  }
+
+  #distribution .box {
+    width: 100%;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+
+  #distribution .problem-name, #distribution .problem-poster, #distribution .date-posted, #distribution .distribution-result {
+    display: flex;
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  #distribution .link {
+    width: 100%;
+    margin-bottom: 1rem;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    font-weight: bold;
+    background-color: #363636;
+    color: white;
+    justify-content: center;
+  }
+
+  #distribution .distribution-button {
     display: flex;
     width: 100%;
     justify-content: center;
