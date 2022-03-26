@@ -163,7 +163,8 @@
         </div>
       </div>
       <div class="column is-12 has-text-centered mt-3" id="button-line">
-        <button class="button is-primary">Distribute</button>
+        <button class="button is-primary" @click="distributeAction" v-if="this.distribution.result==0">Distribute</button>
+        <button class="button is-dark" @click="distributeAction" v-if="this.distribution.result==1" disabled>Done</button>
       </div>
     </div>
   </div>
@@ -171,6 +172,7 @@
 
 <script>
 import axios from 'axios';
+import { toast } from 'bulma-toast';
 export default {
   name: 'Distribution',
   data() {
@@ -261,6 +263,27 @@ export default {
       } else {
         this.$router.push(`/${url}?id=${this.solution.id}`)
       }
+    },
+
+    // Distribute
+    distributeAction() {
+      const distribution_id = this.$route.params.distribution_id
+      axios
+        .put(`/api/v1/distributions/${distribution_id}/update/`)
+        .then(response => {
+          if (response.data.status == 201) {
+            toast({
+              message: "Distribute Successfully",
+              type: 'is-success',
+              duration: 3000,
+              position: 'bottom-right',
+            })
+            location.reload()
+          }
+        })
+        .catch(error => {
+          console.log(error)
+        })
     }
   },
   mounted() {

@@ -214,6 +214,13 @@
                         </div>
                       </div>
                     </div>
+                    <div class="column is-12 expired" v-if="this.solution.solution_result == 0 && this.expired">
+                      <div class="box">
+                        <p>Sorry to bring you a bad experience, FlyMeCrods has automatically helped you to close the session.</p>
+                        <button class="button is-danger" @click="autoReject">Get it</button>
+                      </div>
+                    </div>
+
                     <div class="column is-12" v-if="this.solution.solution_result != 0">
                       <div class="box">
                         <div id="line-1">
@@ -295,6 +302,7 @@ export default {
   name: 'ProblemEdit',
   data() {
     return {
+      expired: false,
       problem: {},
       remaining: 0,
       edit_button: false,
@@ -324,6 +332,13 @@ export default {
             this.remaining = 0
           } else {
             this.remaining = Math.floor((end_time - now) / (1000 * 60 * 60 * 24))
+          }
+
+          // Check whether the deadline is passed
+          if (end_time < now) {
+            this.expired = true
+          } else {
+            this.expired = false
           }
 
           // Convert date to readable date object and there is 8 hours difference
@@ -412,7 +427,6 @@ export default {
             'rating': rating,
             'result': i,
           }
-          console.log(feedback)
           axios
             .post('api/v1/distributions/post/', dataSent)
             .then(response => {
@@ -428,6 +442,32 @@ export default {
     ratingStar(i) {
       this.rating = i
     },
+
+    // Auto Reject the solution if the deadline is passed
+    autoReject() {
+      var feedback = 'Default Feedback: You have missed the deadline of this problem. You will not get the corresponding payment.'
+      var picker = this.solution.get_username
+      var rating = 0
+
+      let autoData = {
+            'problem_id': this.problem.id,
+            'solution_id': this.solution.id, 
+            'feedback': feedback,
+            'picker_name': picker,
+            'rating': rating,
+            'result': 3,
+        }
+
+      axios
+        .post('api/v1/distributions/post/', autoData)
+        .then(response => {
+          console.log(response.data)
+          location.reload()
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    }
   },
   mounted() {
     document.title = 'Problem Management | FlyMeCrods'
@@ -607,6 +647,13 @@ label.star:before {
   font-family: FontAwesome;
 }
 
+/* Expired Part */
+.expired .box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 @media screen and (max-width: 800px) {
   form {
     display: flex;
@@ -647,6 +694,11 @@ label.star:before {
   .attachment-part .buttons {
     margin-top: 1rem;
     margin-left: 0;
+  }
+
+  /* Expired Part */
+  .expired .box {
+    flex-direction: column;
   }
 }
 </style>

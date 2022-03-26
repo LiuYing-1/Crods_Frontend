@@ -114,7 +114,7 @@
                     </div>
                     <p class="module-name"><b>Status</b></p>
                     <div class="distribution-button">
-                      <button class="button is-primary" v-if="item.result==0">Distribute</button>
+                      <button class="button is-primary" v-if="item.result==0" @click="distributeAction(item.id)">Distribute</button>
                       <button class="button is-dark" disabled v-if="item.result==1">Done</button>
                     </div>
                   </div>
@@ -611,6 +611,25 @@ export default {
             
             for (let i = 0; i < this.distributions.length; i++) {
               this.distributions[i].date_posted = this.distributions[i].date_posted.split('T')[0]
+            }
+          })
+          .catch(error => {
+            console.log(error)
+          })
+      },
+      distributeAction(distribution_id) {
+        axios
+          .put('api/v1/distributions/' + distribution_id + '/update/')
+          .then(response=> {
+            if (response.data.status == 201) {
+              toast({
+                message: 'Distribute Successfully',
+                type: 'is-success',
+                duration: 3000,
+                position: 'bottom-right',
+                dismissible: true
+              })
+              location.reload()
             }
           })
           .catch(error => {

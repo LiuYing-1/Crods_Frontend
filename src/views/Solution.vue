@@ -80,7 +80,8 @@
                   <div class="column is-2" id="solution-button" style="display: none">
                     <div class="field">
                       <div class="control">
-                        <button class="button is-primary" type="submit" v-if="this.solution.solution_result==0">Submit</button>
+                        <button class="button is-primary" type="submit" v-if="this.solution.solution_result==0 && !this.expired">Submit</button>
+                        <button class="button is-primary" type="submit" v-if="this.solution.solution_result==0 && this.expired" disabled>Submit</button>
                         <template v-if="!edit_button">
                           <button class="button is-danger" @click="edit_button = !edit_button" v-if="this.solution.solution_result==1">Edit</button>
                           <button class="button is-danger" @click="edit_button = !edit_button" v-if="this.solution.solution_result!=0 && this.solution.solution_result!=1" disabled>
@@ -165,6 +166,7 @@ export default {
       fileName: '',
       solution: {},
       attachment: '',
+      expired: false,
       problem: {},
       remaining: 0,
       errors: [],
@@ -178,7 +180,9 @@ export default {
         .then(response => {
           this.solution = response.data
 
-          this.fileName = this.solution.file_solution.split('/').pop()
+          if (this.solution.file_solution != null) {
+                this.fileName = this.solution.file_solution.split('/').pop()
+          }
         })
         .catch(error => {
           console.log(error);
@@ -194,6 +198,11 @@ export default {
         .then(response => {
           this.problem = response.data
           
+          // Check whether the deadline has passed
+          if (new Date(this.problem.deadline) < new Date()) {
+            this.expired = true
+          }
+
           this.problem.deadline = this.problem.deadline.split('T')[0]
           // Get remaining
           let end_time = new Date(this.problem.deadline)
