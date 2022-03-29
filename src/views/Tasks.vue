@@ -9,31 +9,27 @@
 
     <div class="columns">
       <div class="column is-6">
-        <div class="box">
-          <p class="intro has-text-centered subtitle"><b>Post Your Problem by Filling Out a Form</b></p>
-          <div class="image">
-            <img :src="require('@/assets/post_problem.jpg')" alt="post-problem">
+        <router-link to="/post">
+          <div class="box">
+            <p class="intro has-text-centered subtitle"><b>Post Your Problem by Filling Out a Form</b></p>
+            <div class="image">
+              <img :src="require('@/assets/post_problem.jpg')" alt="post-problem">
+            </div>
+            <p class="reference-pic">Photo by Tara Winstead from Pexels</p>
           </div>
-          <button class="button is-dark">
-            <router-link to="/post"><p class="is-size-4">Post</p></router-link>
-          </button>
-          
-          <p class="reference-pic">Photo by Tara Winstead from Pexels</p>
-        </div>
+        </router-link>
       </div>
 
       <div class="column is-6">
-        <div class="box">
-          <p class="intro has-text-centered subtitle"><b>Check Your Tasks that Are Ready to Do</b></p>
-          <div class="image">
-            <img :src="require('@/assets/ready_todo_cart.jpg')" alt="ready-to-do" @load="loadBar">
+        <router-link to="/checklist">
+          <div class="box">
+            <p class="intro has-text-centered subtitle"><b>Check Your Tasks that Are Ready to Do</b></p>
+            <div class="image">
+              <img :src="require('@/assets/ready_todo_cart.jpg')" alt="ready-to-do" @load="loadBar">
+            </div>
+            <p class="reference-pic">Photo by Startup Stock Photos from Pexels</p>
           </div>
-          <button class="button is-dark">
-            <router-link to="/checklist"><p class="is-size-4">Check</p></router-link>
-          </button>
-          
-          <p class="reference-pic">Photo by Startup Stock Photos from Pexels</p>
-        </div>
+        </router-link>
       </div>
     </div>
   </div>
@@ -60,23 +56,21 @@ export default {
 
 <style scoped>
 .columns .box {
-  background-color: #363636;
+  background-color: lightgrey;
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
-.columns .box p{
-  color: white;
+.columns .box:hover { 
+  background-color: #363636;
+  transform: scale(1.02);
 }
 
-.columns .box .button {
-  position: absolute;
-  bottom: 3rem;
-  place-self: center;
-  border-radius: 1rem;
-  padding: 1.5rem;
+.columns .box:hover, .columns .box:hover p {
+  color: white;
+  transition: all 0.6s;
 }
 
 .reference-pic {
@@ -87,5 +81,4 @@ export default {
   font-size: 0.8rem;
   color: #363636;
 }
-
 </style>

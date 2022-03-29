@@ -8,7 +8,97 @@
       </ul>
     </nav>
 
-    <section class="hero is-medium is-dark">
+    <!-- Rank Module -->
+    <div class="hot-user-list">
+      <div class="content-part">
+        <span><i class="fas fa-fire mr-1"></i></span>
+        <span><b>Reputated</b></span>
+      </div>
+      <div class="cc rowup has-text-centered">
+        <div class="item">{{ this.hot_users[0] }}</div>
+        <div class="item">{{ this.hot_users[1] }}</div>
+        <div class="item">{{ this.hot_users[2] }}</div>
+      </div>
+    </div>
+
+    <!-- Div to SideBar -->
+    <div class="sidebar side-part">
+      <div class="sidebar-item">
+        <div class="sidebar-item-header">
+          <p class="sidebar-item-header-text">
+            <b>Page Instructor</b>
+          </p>
+        </div>
+        <hr>
+        <div class="sidebar-item-content">
+          <div class="sidebar-item-content-item">
+            <p class="sidebar-item-content-item-text">
+              <b><i class="fas fa-dot-circle"></i></b>
+            </p>
+          </div>
+          <div class="sidebar-item-content-item mt-3">
+            <p class="sidebar-item-content-item-text">
+              <b><i class="fas fa-dot-circle"></i></b>
+            </p>
+          </div>
+          <div class="sidebar-item-content-item mt-3">
+            <p class="sidebar-item-content-item-text">
+              <b><i class="fas fa-dot-circle"></i></b>
+            </p>
+          </div>
+          <div class="sidebar-item-content-item mt-3">
+            <p class="sidebar-item-content-item-text">
+              <b><i class="fas fa-dot-circle"></i></b>
+            </p>
+          </div>
+          <div class="sidebar-item-content-item mt-3">
+            <p class="sidebar-item-content-item-text">
+              <b><i class="fas fa-dot-circle"></i></b>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar main-part">
+      <div class="sidebar-item">
+        <div class="sidebar-item-header">
+          <p class="sidebar-item-header-text">
+            <b>FlyMeCrods Home</b>
+          </p>
+        </div>
+        <hr>
+        <div class="sidebar-item-content">
+          <div class="sidebar-item-content-item">
+            <p class="sidebar-item-content-item-text">
+              <b><a href="#sidebar-introduction">Introduction</a></b>
+            </p>
+          </div>
+          <div class="sidebar-item-content-item mt-3">
+            <p class="sidebar-item-content-item-text">
+              <b><a href="#fields">Business Fields</a></b>
+            </p>
+          </div>
+          <div class="sidebar-item-content-item mt-3">
+            <p class="sidebar-item-content-item-text">
+              <b><a href="#sidebar-cases">Marvellous Cases</a></b>
+            </p>
+          </div>
+          <div class="sidebar-item-content-item mt-3">
+            <p class="sidebar-item-content-item-text">
+              <b><a href="#steps">Post Now</a></b>
+            </p>
+          </div>
+          <div class="sidebar-item-content-item mt-3">
+            <p class="sidebar-item-content-item-text">
+              <b><a href="#frames">Used Techniques</a></b>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section class="hero is-medium is-dark" id="sidebar-introduction">
       <div class="hero-body has-text-centered">
         <p class="title mb-6">
           Welcome to FlyMeCrods!
@@ -272,7 +362,7 @@
     </section>
 
     <!-- This is the place for cases by using bulma-carousel -->
-    <section class="hero mt-3">
+    <section class="hero mt-3" id="sidebar-cases">
       <div class="hero-body has-text-centered" id="case-hero-body">
           <p class="title">Marvellous Cases with Superior Services</p>
           <p class="subtitle">Successful Experience Support Us to Continue</p>
@@ -1180,6 +1270,127 @@
   color: black;
 }
 
+/* Hover to show sidebar */
+.main-part {
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  padding-top: 1rem;
+  top: 3.5rem;
+  left: -10rem;
+  width: 10rem;
+  height: 100vh;
+  background-color: rgb(255, 255, 255);
+  z-index: 0;
+  transition: all 0.6s;
+}
+
+.side-part {
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  padding-top: 1rem;
+  top: 3.5rem;
+  left: 0rem;
+  width: 2.8rem;
+  height: 100vh;
+  background-color: rgb(255, 255, 255);
+  z-index: 1;
+  transition: all 0.6s;
+}
+
+.side-part .sidebar-item-header p {
+  writing-mode: tb-rl;
+}
+
+.side-part .sidebar-item-content, .main-part .sidebar-item-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.sidebar a {
+  color: #363636;
+}
+
+.sidebar-item-content-item {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  border-radius: 0.2rem;
+}
+
+.sidebar .sidebar-item-content-item:hover {
+  background-color: rgba(83, 241, 162, 0.76);
+  transition: all 0.6s;
+}
+
+.sidebar .sidebar-item-content-item:hover a {
+  color: darkgray;
+  transition: all 0.6s;
+}
+
+.side-part:hover {
+  opacity: 0;
+  z-index: 0;
+}
+
+.side-part:hover + .main-part {
+  transform: translateX(10rem);
+  z-index: 1;
+  transition: all 0.6s;
+}
+
+.main-part:hover {
+  transform: translateX(10rem);
+  z-index: 1;
+}
+
+.is-selected {
+  background-color: rgba(83, 241, 162, 0.76);
+  color: darkgray;
+}
+
+@-webkit-keyframes rowup {
+  0% {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    -webkit-transform: translate3d(0, -3rem, 0);
+    transform: translate3d(0, -3rem, 0);
+  }
+}
+
+@keyframes rowup {
+  0% {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    -webkit-transform: translate3d(0, -3rem, 0);
+    transform: translate3d(0, -3rem, 0);
+  }
+}
+ 
+.hot-user-list{
+  position: absolute;
+  display: flex;
+  top: 5rem;
+  left: 45%;
+  width: 20rem;
+  height: 2rem;
+  overflow: hidden;
+}
+
+.hot-user-list .rowup{
+  margin-left: 1rem;
+  -webkit-animation: 5s rowup linear infinite normal;
+  animation: 5s rowup linear infinite normal;
+  position: relative;
+}
+
 @media screen and (max-width: 800px) {
   .cards {
     flex-direction: column;
@@ -1223,16 +1434,25 @@
     border: 0.1rem solid black;
   }
 
+  .side-part {
+    width: 1.4rem;
+  }
+
+  .rank-module {
+    right: 25%;
+  }
 } 
 </style>
 
 <script>
+import axios from 'axios'
 // @ is an alias to /src
 import bulmaCarousel from '/crowd-soucing/crods_vue/node_modules/bulma-extensions/bulma-carousel/dist/js/bulma-carousel.min.js'
 export default {
   name: 'Home',
   data () {
     return {
+      hot_users: [],
     }
   },
   components: {
@@ -1365,6 +1585,19 @@ export default {
         document.getElementById('tab-4').classList.remove('is-active')
         document.getElementById('tab-page-four').classList.add('is-hidden')
       },
+
+      // Most popular user with higher reputation
+      getUsersWithReputation() {
+        axios
+          .get('api/v1/rank-users/')
+          .then(response => {
+            this.hot_users = response.data
+
+            for (var i = 0; i < this.hot_users.length; i++) {
+              this.hot_users[i] = this.hot_users[i].get_user_simple_data.username + ': ' + this.hot_users[i].reputation.split('.')[0]
+            }
+          })
+      }
   },
   
   activated () {
@@ -1376,6 +1609,7 @@ export default {
   },
 
   mounted() {
+    this.getUsersWithReputation()
     document.title = 'Home | FlyMeCrods' 
   },
 }

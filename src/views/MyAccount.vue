@@ -130,6 +130,73 @@
             </div>
           </div>
         </div>
+
+        <!-- Div to SideBar => Admin -->
+        <div class="sidebar side-part">
+          <div class="sidebar-item">
+            <div class="sidebar-item-header">
+              <p class="sidebar-item-header-text">
+                <b>Page Instructor</b>
+              </p>
+            </div>
+            <hr>
+            <div class="sidebar-item-content">
+              <div class="sidebar-item-content-item">
+                <p class="sidebar-item-content-item-text">
+                  <b><i class="fas fa-dot-circle"></i></b>
+                </p>
+              </div>
+              <div class="sidebar-item-content-item mt-3">
+                <p class="sidebar-item-content-item-text">
+                  <b><i class="fas fa-dot-circle"></i></b>
+                </p>
+              </div>
+              <div class="sidebar-item-content-item mt-3">
+                <p class="sidebar-item-content-item-text">
+                  <b><i class="fas fa-dot-circle"></i></b>
+                </p>
+              </div>
+              <div class="sidebar-item-content-item mt-3">
+                <p class="sidebar-item-content-item-text">
+                  <b><i class="fas fa-dot-circle"></i></b>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar main-part">
+          <div class="sidebar-item">
+            <div class="sidebar-item-header">
+              <p class="sidebar-item-header-text">
+                <b>Administration</b>
+              </p>
+            </div>
+            <hr>
+            <div class="sidebar-item-content">
+              <div class="sidebar-item-content-item">
+                <p class="sidebar-item-content-item-text">
+                  <b><a href="#global">Global</a></b>
+                </p>
+              </div>
+              <div class="sidebar-item-content-item mt-3">
+                <p class="sidebar-item-content-item-text">
+                  <b><a href="#presession">Presession</a></b>
+                </p>
+              </div>
+              <div class="sidebar-item-content-item mt-3">
+                <p class="sidebar-item-content-item-text">
+                  <b><a href="#distribution">Distribution</a></b>
+                </p>
+              </div>
+              <div class="sidebar-item-content-item mt-3">
+                <p class="sidebar-item-content-item-text">
+                  <b><a href="#summary">Summary</a></b>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </template>
 
@@ -393,6 +460,73 @@
             </div>
           </div>
         </div>
+
+        <!-- Div to SideBar -->
+        <div class="sidebar side-part">
+          <div class="sidebar-item">
+            <div class="sidebar-item-header">
+              <p class="sidebar-item-header-text">
+                <b>Page Instructor</b>
+              </p>
+            </div>
+            <hr>
+            <div class="sidebar-item-content">
+              <div class="sidebar-item-content-item">
+                <p class="sidebar-item-content-item-text">
+                  <b><i class="fas fa-dot-circle"></i></b>
+                </p>
+              </div>
+              <div class="sidebar-item-content-item mt-3">
+                <p class="sidebar-item-content-item-text">
+                  <b><i class="fas fa-dot-circle"></i></b>
+                </p>
+              </div>
+              <div class="sidebar-item-content-item mt-3">
+                <p class="sidebar-item-content-item-text">
+                  <b><i class="fas fa-dot-circle"></i></b>
+                </p>
+              </div>
+              <div class="sidebar-item-content-item mt-3">
+                <p class="sidebar-item-content-item-text">
+                  <b><i class="fas fa-dot-circle"></i></b>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar main-part">
+          <div class="sidebar-item">
+            <div class="sidebar-item-header">
+              <p class="sidebar-item-header-text">
+                <b>My Account</b>
+              </p>
+            </div>
+            <hr>
+            <div class="sidebar-item-content">
+              <div class="sidebar-item-content-item">
+                <p class="sidebar-item-content-item-text">
+                  <b><a href="#profile">Profile</a></b>
+                </p>
+              </div>
+              <div class="sidebar-item-content-item mt-3">
+                <p class="sidebar-item-content-item-text">
+                  <b><a href="#posted">Posted</a></b>
+                </p>
+              </div>
+              <div class="sidebar-item-content-item mt-3">
+                <p class="sidebar-item-content-item-text">
+                  <b><a href="#picked">Picked</a></b>
+                </p>
+              </div>
+              <div class="sidebar-item-content-item mt-3">
+                <p class="sidebar-item-content-item-text">
+                  <b><a href="#summary">Summary</a></b>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </template>
   </div>
@@ -635,7 +769,7 @@ export default {
           .catch(error => {
             console.log(error)
           })
-      }
+      },
     },
     mounted() {
         document.title = "My Account | FlyMeCrods"
@@ -953,6 +1087,87 @@ form input{
   transition: all 0.4s;
 }
 
+.main-part {
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  padding-top: 1rem;
+  top: 3.5rem;
+  left: -10rem;
+  width: 10rem;
+  height: 100vh;
+  background-color: rgb(255, 255, 255);
+  z-index: 0;
+  transition: all 0.6s;
+}
+
+.side-part {
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  padding-top: 1rem;
+  top: 3.5rem;
+  left: 0rem;
+  width: 3rem;
+  height: 100vh;
+  background-color: rgb(255, 255, 255);
+  z-index: 1;
+  transition: all 0.6s;
+}
+
+.side-part .sidebar-item-header p {
+  writing-mode: tb-rl;
+}
+
+.side-part .sidebar-item-content, .main-part .sidebar-item-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.sidebar a {
+  color: #363636;
+}
+
+.sidebar-item-content-item {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  border-radius: 0.2rem;
+}
+
+.sidebar .sidebar-item-content-item:hover {
+  background-color: rgba(83, 241, 162, 0.76);
+  transition: all 0.6s;
+}
+
+.sidebar .sidebar-item-content-item:hover a {
+  color: darkgray;
+  transition: all 0.6s;
+}
+
+.side-part:hover {
+  opacity: 0;
+  z-index: 0;
+}
+
+.side-part:hover + .main-part {
+  transform: translateX(10rem);
+  z-index: 1;
+  transition: all 0.6s;
+}
+
+.main-part:hover {
+  transform: translateX(10rem);
+  z-index: 1;
+}
+
+.is-selected {
+  background-color: rgba(83, 241, 162, 0.76);
+  color: darkgray;
+}
+
 @media screen and (max-width: 800px) {
   form {
     flex-direction: column;
@@ -1066,6 +1281,10 @@ form input{
     width: 100%;
     display: flex;
     justify-content: center;
+  }
+
+  .side-part {
+    width: 1.4rem;
   }
 }
 </style>
