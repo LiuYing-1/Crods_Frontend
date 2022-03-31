@@ -44,6 +44,54 @@
         </ul>
       </nav>
 
+      <!-- Div to SideBar -->
+      <div class="sidebar side-part">
+        <div class="sidebar-item">
+          <div class="sidebar-item-header">
+            <p class="sidebar-item-header-text">
+              <b>Page Instructor</b>
+            </p>
+          </div>
+          <hr>
+          <div class="sidebar-item-content">
+            <div class="sidebar-item-content-item">
+              <p class="sidebar-item-content-item-text">
+                <b><i class="fas fa-dot-circle"></i></b>
+              </p>
+            </div>
+            <div class="sidebar-item-content-item mt-3">
+              <p class="sidebar-item-content-item-text">
+                <b><i class="fas fa-dot-circle"></i></b>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar main-part">
+        <div class="sidebar-item">
+          <div class="sidebar-item-header">
+            <p class="sidebar-item-header-text">
+              <b>Problem Intro</b>
+            </p>
+          </div>
+          <hr>
+          <div class="sidebar-item-content">
+            <div class="sidebar-item-content-item">
+              <p class="sidebar-item-content-item-text">
+                <b><a href="#">Details</a></b>
+              </p>
+            </div>
+            <div class="sidebar-item-content-item mt-3">
+              <p class="sidebar-item-content-item-text">
+                <b><a href="#comments-part">Comments</a></b>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Problem.vue Main Body -->
       <div class="columns is-multiline">
         <div class="column is-6">
           <figure class="image mb-6">
@@ -106,6 +154,94 @@
             </div>
           </div>
         </div>
+
+        <!-- Comments Part Below -->
+        <div class="column is-12" id="comments-part">
+          <hr>
+          <h2 class="title"><p>Comments</p></h2>
+          <template v-if="this.comments.length == 0">
+            <p class="mb-4"><strong>There are no comments on this problem yet.</strong></p>
+          </template>
+
+          <template v-else>
+            <div class="columns is-multiline" v-for="comment in this.comments" v-bind:key="comment.id">
+              <div class="column is-12">
+                <div class="media">
+                  <div class="media-left">
+                    <figure class="image is-64x64">
+                      <img :src="require('@/assets/icons8-man-in-yellow-striped-sweater.png')">
+                    </figure>
+                  </div>
+                  <div class="media-content">
+                    <div class="content">
+                      <p>
+                        <strong>{{ comment.get_username }}</strong>
+                        <br>
+                        {{ comment.content }}
+                        <br>
+                        <small><a class="like" @click="likeOperation(comment.id, 1)">Like</a> · <a @click="extendReplyPart(comment.id)">Reply</a> · {{comment.created_at}}</small>
+                      </p>
+                      <div v-if="comment.id == this.replyOn" class="reply-extend-part">
+                        <input type="input" class="input" name="input" placeholder="Say something..." v-model="inputContent"/>
+                        <button class="button small is-primary" @click="submitReply(comment.id)" v-if="this.inputContent != ''">
+                          <span><i class="fas fa-check mr-3"></i></span>
+                          <span>ok</span>
+                        </button>
+                      </div>
+                    </div>
+                    <!-- Check the corresponding replies -->
+                    <div v-for="array in this.replies" v-bind:key="array.id">
+                      <div v-for="reply in array" v-bind:key="reply.id">
+                        <article class="media" v-if="reply.comment == comment.id">
+                          <figure class="media-left">
+                            <p class="image is-48x48">
+                              <img :src="require('@/assets/icons8-man-in-blue-t-shirt.png')">
+                            </p>
+                          </figure>
+                          <div class="media-content">
+                            <div class="content">
+                              <p>
+                                <strong>{{ reply.get_username }}</strong>
+                                <br>
+                                {{ reply.content }}
+                                <br>
+                                <small><a class="like" @click="likeOperation(reply.id, 2)">Like</a> · {{ reply.created_at }}</small>
+                              </p>
+                            </div>
+                          </div>
+                        </article>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <hr class="mb-1">
+              </div>
+            </div>
+          </template>
+          <article class="media">
+            <figure class="media-left">
+              <p class="image is-64x64">
+                <img :src="require('@/assets/icons8-man-in-yellow-striped-sweater.png')">
+              </p>
+            </figure>
+            <div class="media-content">
+              <div class="field">
+                <p class="control">
+                  <textarea class="textarea" placeholder="Add a comment..."></textarea>
+                </p>
+              </div>
+
+              <div class="notification is-danger" v-if="errors.length">
+                <p v-for="error in errors" v-bind:key="error">{{ error }}</p>
+              </div>
+              <div class="field">
+                <p class="control">
+                  <button class="button" @click="postComments">Post comment</button>
+                </p>
+              </div>
+            </div>
+          </article>
+        </div>
       </div>
     </template>
   </div>
@@ -120,13 +256,201 @@ export default {
     data() {
         return {
             problem: {},
+            comments: [],
+            replies: [],
             expired: false,
+            errors: [],
+            replyOn: false,
+            inputContent: '',
         }
     },
-    mounted() {
-        this.getProblem()
-    },
     methods: {
+        // Like Operation
+        likeOperation(id, category) {
+          let comment = 0
+          let reply = 0
+          // Category == 1 => Comment, Category == 2 => Reply
+          if (category == 1) {
+            comment = id
+          } else if (category == 2) {
+            reply = id
+          }
+          
+          axios
+            .put(`api/v1/comments/like/`, {
+              comment: comment,
+              reply: reply,
+            })
+            .then(response => {
+              console.log(response)
+              toast({
+                    message: 'Like + 1 Done!',
+                    type: 'is-success',
+                    position: 'bottom-right',
+                    dismissible: true,
+                    duration: 2000
+                  })
+            })
+            .catch(error => {
+              console.log(error)
+            })
+        },
+
+        // Get the replies for the comment
+        getReplies(comment_id) {
+          axios
+            .get(`api/v1/comments/${comment_id}/replies/`)
+            .then(response => {
+              for (let i = 0; i < response.data.length; i++) {
+                // Calc the time to check whether it has been created over 12 hours
+                var time = new Date(response.data[i].created_at)
+                var now = new Date()
+                var diff = now - time
+                var diffHours = diff / (1000 * 60 * 60)
+                if (diffHours > 12) {
+                  response.data[i].created_at = response.data[i].created_at.split('T')[0] + ' ' + response.data[i].created_at.split('T')[1].split('.')[0]
+                } else {
+                  response.data[i].created_at = diffHours.toFixed(0) + ' hrs'
+                }
+              }
+              this.replies.push(response.data)
+            })
+            .catch(error => {
+              console.log(error)
+            })
+        },
+        // Get the comments for the problem
+        getComments(id){
+          axios
+            .get(`api/v1/comments/${id}`)
+            .then(response => {
+              this.comments = response.data
+              
+              for (var i = 0; i < this.comments.length; i++) {
+                // Calc the time to check whether it has been created over 12 hours
+                var time = new Date(this.comments[i].created_at)
+                var now = new Date()
+                var diff = now - time
+                var diffHours = diff / (1000 * 60 * 60)
+                if (diffHours > 12) {
+                  this.comments[i].created_at = this.comments[i].created_at.split('T')[0] + ' ' + this.comments[i].created_at.split('T')[1].split('.')[0]
+                } else {
+                  this.comments[i].created_at = diffHours.toFixed(0) + ' hrs'
+                }
+                // Get the replies for the comment
+                this.getReplies(this.comments[i].id)
+              }
+            })
+            .catch(error => {
+              console.log(error)
+            })
+        },
+
+        postComments() {
+          // Check user login status 
+          if (localStorage.getItem('userid') == null) {
+            toast({
+              message: 'You must be logged in to post a comment.',
+              type: 'is-danger',
+              position: 'bottom-right',
+              dismissible: true,
+              duration: 2000
+            })
+            return
+          } else {
+            const problem_id = this.problem.id
+            const user_id = localStorage.getItem('userid')
+            const content = document.querySelector('textarea').value
+
+            this.errors = []
+
+            if (content == '') {
+              this.errors.push('You must enter a comment.')
+            } else {
+              axios
+                .post(`api/v1/comments/post/`, {
+                  user: user_id,
+                  problem: problem_id,
+                  content: content
+                })
+                .then(response => {
+                  toast({
+                    message: 'Comment posted successfully.',
+                    type: 'is-success',
+                    position: 'bottom-right',
+                    dismissible: true,
+                    duration: 2000
+                  })
+                  location.reload()
+                })
+                .catch(error => {
+                  if(error.response) {
+                    for (const property in error.response.data) {
+                      this.errors.push(error.response.data[property])
+                    }
+                  }
+                  toast({
+                    message: 'Error posting comment.',
+                    type: 'is-danger',
+                    position: 'bottom-right',
+                    dismissible: true,
+                    duration: 2000
+                  })
+                })
+            }
+          }
+        },
+
+        // Extend Part for a reply to a comment
+        extendReplyPart(id){
+          // Check user login status
+          if (localStorage.getItem('userid') == null) {
+            toast({
+              message: 'You must be logged in to post a reply.',
+              type: 'is-danger',
+              position: 'bottom-right',
+              dismissible: true,
+              duration: 2000
+            })
+            return
+          } else {
+            this.replyOn = id
+          }
+        },
+
+        // Submit the reply
+        submitReply(id) {
+          const user_id = localStorage.getItem('userid')
+          const comment_id = id
+          const content = this.inputContent
+
+          axios
+            .post(`api/v1/comments/replies/post/`, {
+              user: user_id,
+              comment: comment_id,
+              content: content,
+            })
+            .then(response => {
+              toast({
+                message: 'Reply posted successfully.',
+                type: 'is-success',
+                position: 'bottom-right',
+                dismissible: true,
+                duration: 2000
+              })
+              location.reload()
+            })
+            .catch(error => {
+              toast({
+                message: 'Error posting reply.',
+                type: 'is-danger',
+                position: 'bottom-right',
+                dismissible: true,
+                duration: 2000
+              })
+            })
+        },
+
         async getProblem() {
             this.$store.commit('setIsLoading', true)
 
@@ -153,6 +477,9 @@ export default {
                     if (this.problem.deadline < new Date().toISOString().split('T')[0]) {
                         this.expired = true
                     }
+
+                    // Get Related Comments
+                    this.getComments(this.problem.id)
 
                     document.title = this.problem.name + ' | FlyMeCrods'
                 })
@@ -205,7 +532,10 @@ export default {
             })
           }
         }
-    }
+    },
+    mounted() {
+        this.getProblem()
+    },
 }
 </script>
 
@@ -254,6 +584,97 @@ export default {
   margin-bottom: 1rem;
 }
 
+/* Sidebar */
+.main-part {
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  padding-top: 1rem;
+  top: 3.5rem;
+  left: -10rem;
+  width: 10rem;
+  height: 100vh;
+  background-color: rgb(255, 255, 255);
+  z-index: 0;
+  transition: all 0.6s;
+}
+
+.side-part {
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  padding-top: 1rem;
+  top: 3.5rem;
+  left: 0rem;
+  width: 2.8rem;
+  height: 100vh;
+  background-color: rgb(255, 255, 255);
+  z-index: 1;
+  transition: all 0.6s;
+}
+
+.side-part .sidebar-item-header p {
+  writing-mode: tb-rl;
+}
+
+.side-part .sidebar-item-content, .main-part .sidebar-item-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.sidebar a {
+  color: #363636;
+}
+
+.sidebar-item-content-item {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  border-radius: 0.2rem;
+}
+
+.sidebar .sidebar-item-content-item:hover {
+  background-color: rgba(83, 241, 162, 0.76);
+  transition: all 0.6s;
+}
+
+.sidebar .sidebar-item-content-item:hover a {
+  color: darkgray;
+  transition: all 0.6s;
+}
+
+.side-part:hover {
+  opacity: 0;
+  z-index: 0;
+}
+
+.side-part:hover + .main-part {
+  transform: translateX(10rem);
+  z-index: 1;
+  transition: all 0.6s;
+}
+
+.main-part:hover {
+  transform: translateX(10rem);
+  z-index: 1;
+}
+
+textarea {
+  font-family: 'Noto Serif Display', serif;
+}
+
+.reply-extend-part {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+input {
+  font-family: 'Noto Serif Display', serif;
+}
+
 @media screen and (max-width: 800px) {
   #problem-not-found {
     flex-direction: column;
@@ -263,5 +684,11 @@ export default {
     justify-content: center;
     align-items: flex-start;
   } 
+  .side-part {
+    width: 1.4rem;
+  }
+  .media .image {
+    display: none;
+  }
 }
 </style>
