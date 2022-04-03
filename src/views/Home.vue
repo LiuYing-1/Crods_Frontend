@@ -18,6 +18,8 @@
         <div class="item">{{ this.hot_users[0] }}</div>
         <div class="item">{{ this.hot_users[1] }}</div>
         <div class="item">{{ this.hot_users[2] }}</div>
+        <div class="item">{{ this.hot_users[3] }}</div>
+        <div class="item">{{ this.hot_users[4] }}</div>
       </div>
     </div>
 
@@ -1358,8 +1360,8 @@
     transform: translate3d(0, 0, 0);
   }
   100% {
-    -webkit-transform: translate3d(0, -3rem, 0);
-    transform: translate3d(0, -3rem, 0);
+    -webkit-transform: translate3d(0, -6rem, 0);
+    transform: translate3d(0, -6rem, 0);
   }
 }
 
@@ -1369,8 +1371,8 @@
     transform: translate3d(0, 0, 0);
   }
   100% {
-    -webkit-transform: translate3d(0, -3rem, 0);
-    transform: translate3d(0, -3rem, 0);
+    -webkit-transform: translate3d(0, -6rem, 0);
+    transform: translate3d(0, -6rem, 0);
   }
 }
  
@@ -1386,8 +1388,8 @@
 
 .hot-user-list .rowup{
   margin-left: 1rem;
-  -webkit-animation: 5s rowup linear infinite normal;
-  animation: 5s rowup linear infinite normal;
+  -webkit-animation: 10s rowup linear infinite normal;
+  animation: 10s rowup linear infinite normal;
   position: relative;
 }
 
@@ -1436,10 +1438,6 @@
 
   .side-part {
     width: 1.4rem;
-  }
-
-  .rank-module {
-    right: 25%;
   }
 } 
 </style>
