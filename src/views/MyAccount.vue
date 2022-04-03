@@ -7,6 +7,14 @@
       </ul>
     </nav>
 
+    <!-- Below is the Email and Notification Part -->
+    <div class="email-section">
+      <router-link to="/email">
+        <i class="fas fa-envelope"></i>
+      </router-link>
+      <p class="tips">You have 0 unread message(s).</p>
+    </div>
+
     <!-- This is the Page for the Admin -->
     <template v-if="user.username == 'YING'">
       <div class="columns is-multiline" id="admin-page">
@@ -1168,7 +1176,30 @@ form input{
   color: darkgray;
 }
 
-@media screen and (max-width: 800px) {
+.my-account {
+  position: relative;
+}
+
+.email-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  position: absolute;
+  right: 3rem;
+  top: 5rem;
+}
+
+.email-section .tips {
+  display: none;
+}
+
+.email-section a:hover + .tips {
+  display: initial;
+  transition: all 0.6s;
+}
+
+@media screen and (max-width: 768px) {
   form {
     flex-direction: column;
     justify-content: center;
@@ -1285,6 +1316,10 @@ form input{
 
   .side-part {
     width: 1.4rem;
+  }
+
+  .email-section {
+    right: 1.4rem;
   }
 }
 </style>

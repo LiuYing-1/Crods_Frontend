@@ -126,6 +126,11 @@ const routes = [
     component: () => import(/* webpackChunkName: "my-account" */ '../views/Distribution.vue'),
   },
   {
+    path: '/email',
+    name: 'Email',
+    component: () => import(/* webpackChunkName: "email" */ '../views/Email.vue'),
+  },
+  {
     path: '/404',
     name: '404',
     component: () => import(/* webpackChunkName: "404" */ '../views/PageNotFound.vue')

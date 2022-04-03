@@ -1393,7 +1393,7 @@
   position: relative;
 }
 
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 768px) {
   .cards {
     flex-direction: column;
   }
@@ -1438,6 +1438,10 @@
 
   .side-part {
     width: 1.4rem;
+  }
+
+  .hot-user-list {
+    display: none;
   }
 } 
 </style>
