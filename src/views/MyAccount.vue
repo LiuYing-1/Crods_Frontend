@@ -10,9 +10,11 @@
     <!-- Below is the Email and Notification Part -->
     <div class="email-section">
       <router-link to="/email">
-        <i class="fas fa-envelope"></i>
+        <i class="fas fa-envelope" v-if="this.user.email.length != 0"></i>
       </router-link>
-      <p class="tips">You have 0 unread message(s).</p>
+      <a><i class="fas fa-envelope" v-if="this.user.email.length == 0" disabled></i></a>
+      <p class="tips" v-if="this.user.email.length != 0">You have 0 unread message(s).</p>
+      <p class="tips" v-if="this.user.email.length == 0">You don't register your email.</p>
     </div>
 
     <!-- This is the Page for the Admin -->
@@ -614,7 +616,7 @@ export default {
             })
             .then(response => {
               console.log(response)
-              if(response.data.message == 'Please do not use the same email address')
+              if(response.data.status == 400)
               {
                 toast({
                   message: response.data.message,

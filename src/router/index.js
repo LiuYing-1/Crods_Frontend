@@ -129,6 +129,14 @@ const routes = [
     path: '/email',
     name: 'Email',
     component: () => import(/* webpackChunkName: "email" */ '../views/Email.vue'),
+    meta: {
+      requireLogin: true
+    }
+  },
+  {
+    path: '/email/:email_id',
+    name: 'EmailDetail',
+    component: () => import(/* webpackChunkName: "email-detail" */ '../views/EmailDetail.vue'),
   },
   {
     path: '/404',
