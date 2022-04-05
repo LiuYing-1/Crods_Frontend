@@ -49,10 +49,10 @@
                   </div>
                   <div class="column is-12 topic">
                     <p>Topic</p>
-                    <input type="input" class="input" />
+                    <input type="input" class="input" v-model="this.topic" />
                   </div>
                   <div class="column is-12 email-content">
-                    <textarea type="textarea" class="textarea"></textarea>
+                    <textarea type="textarea" class="textarea" placeholder="Write something here..." v-model="this.email_text"></textarea>
                   </div>
                   <div class="column is-12">
                     <div class="file has-name is-left">
@@ -76,8 +76,13 @@
                       </button>
                     </div>
                   </div>
+                  <div class="column is-12">
+                    <div class="notification is-danger" v-if="errors.length">
+                      <p v-for="error in errors" v-bind:key="error">{{ error }}</p>
+                    </div>
+                  </div>
                   <div class="column is-12 has-text-right">
-                    <button class="button is-info">Send</button>
+                    <button class="button is-info" @click="submitForm">Send</button>
                   </div>
                 </div>
               </div>
@@ -106,7 +111,10 @@
                 <router-link :to="/email/ + email.id">
                   <div class="box unread-emails" v-if="email.unread == 0">
                     <div class="sender-username">
-                      <p>{{ email.get_sender_username }}</p>
+                      <p>
+                        <span>{{ email.get_sender_username }}</span>
+                        <span v-if="email.attatchment != null"><i class="fas fa-paperclip ml-3"></i></span>
+                      </p>
                     </div>
                     <div class="email-topic">
                       <p>{{ email.name }}</p>
@@ -121,7 +129,10 @@
                   <!-- Already Read Emails -->
                   <div class="box read-emails" v-if="email.unread == 1">
                     <div class="sender-username">
-                      <p>{{ email.get_sender_username }}</p>
+                      <p>
+                        <span>{{ email.get_sender_username }}</span>
+                        <span v-if="email.attatchment != null"><i class="fas fa-paperclip ml-3"></i></span>
+                      </p>
                     </div>
                     <div class="email-topic">
                       <p>{{ email.name }}</p>
@@ -155,7 +166,32 @@
             </div>
           </template>
           <template v-else>
-            
+            <div class="column is-12" id="inbox-part">
+              <div v-for="email in this.sent_emails" v-bind:key="email.id">
+                <router-link :to="/email/ + email.id">
+                  <div class="box read-emails">
+                    <div class="sender-username">
+                      <p>
+                        <span>{{ email.get_receiver_username }}</span>
+                        <span v-if="email.attatchment != null"><i class="fas fa-paperclip ml-3"></i></span>
+                      </p>
+                    </div>
+                    <div class="email-topic">
+                      <p>{{ email.name }}</p>
+                    </div>
+                    <div class="email-content">
+                      <p class="has-text-grey">{{ email.text }}</p>
+                    </div>
+                    <div class="email-date">
+                      <p>
+                        <span><i class="far fa-envelope-open mr-3"></i></span>
+                        <span>{{ email.date_sent }}</span>
+                      </p>
+                    </div>
+                  </div>
+                </router-link>
+              </div>
+            </div>
           </template>
         </div>
       </template>
@@ -165,6 +201,7 @@
 
 <script>
 import axios from 'axios'
+import { toast } from 'bulma-toast'
 export default {
   name: 'Email',
   data() {
@@ -178,6 +215,10 @@ export default {
       valid: 0,
       fileName: '',
       attachment: '',
+      topic: '',
+      email_text: '',
+      reply_to: '',
+      errors: [],
     }
   },
   methods: {
@@ -194,9 +235,18 @@ export default {
         }
       }
       let icons = document.getElementsByTagName('i')
+      let paperclip = document.querySelectorAll('.fa-paperclip')
+      let envelope = document.querySelectorAll('.fa-envelope-open')
       let email_section = document.querySelector('.email-section')
       for (let i = 0; i < icons.length; i++) {
         icons[i].classList.toggle('move-to-right')
+      }
+
+      for (let i = 0; i < paperclip.length; i++) {
+        paperclip[i].classList.toggle('move-to-left-special')
+      }
+      for (let i = 0; i < envelope.length; i++) {
+        envelope[i].classList.toggle('move-to-left-special')
       }
       email_section.classList.toggle('move-to-left')
     },
@@ -233,6 +283,71 @@ export default {
         })
     },
 
+    submitForm() {
+      // Validate the Required Form Data
+      this.errors = []
+
+      if (this.valid == 0) {
+        this.errors.push('Please check the email address before sending.')
+      }
+
+      if (this.ready_to_send === '' || this.valid == 2) {
+        this.errors.push('Please enter the correct email address.')
+      }
+
+      if (this.topic === '') {
+        this.errors.push('Topic is missing!')        
+      }
+
+      if (this.email_text === '' && this.attachment === '') {
+        this.errors.push('Email content could not be empty!')        
+      }
+
+      if (!this.errors.length) {
+        let file = document.querySelector('input[type=file]').files[0]
+        let formData = new FormData()
+        
+        formData.append('topic', this.topic)
+        formData.append('receiver_address', this.ready_to_send)
+        formData.append('sender_address', this.user.get_user_simple_data.email)
+        formData.append('text', this.email_text)
+        formData.append('attachment', file)
+        formData.append('reply', this.reply_to)
+
+        let options = {
+              url: '/api/v1/emails/email/post/',
+              data: formData,
+              method: 'post',
+              processData: false,
+              headers: {
+                  'Content-Type': 'multipart/form-data'
+              }
+          }
+        
+        axios(options)
+          .then(response => {
+            if (response.data.status == 200) {
+              toast({
+                message: 'Email has been sent successfully!',
+                type: 'is-success',
+                duration: 3000
+              })
+              location.reload()
+            } else {
+              toast({
+                message: 'Email could not be sent!',
+                type: 'is-danger',
+                duration: 3000
+              })
+            }
+          })
+          .catch(error => {
+            console.log(error)
+          })
+      }
+
+    },
+
     getEmails(address) {
       axios
         .get('api/v1/emails/' + address)
@@ -240,8 +355,31 @@ export default {
           this.received_emails = response.data
           for (let i = 0; i < this.received_emails.length; i++) {
             this.received_emails[i].date_sent = this.received_emails[i].date_sent.slice(5, 10)
+            if (this.received_emails[i].name.length > 20) {
+              this.received_emails[i].name = this.received_emails[i].name.slice(0, 20) + '...'
+            }
             if (this.received_emails[i].text.length > 65) {
               this.received_emails[i].text = this.received_emails[i].text.slice(0, 65) + '...'
+            }
+          }
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    },
+
+    getSentEmails(address) {
+      axios
+        .get('api/v1/emails/' + address + '/sent/')
+        .then(response => {
+          this.sent_emails = response.data
+          for (let i = 0; i < this.sent_emails.length; i++) {
+            this.sent_emails[i].date_sent = this.sent_emails[i].date_sent.slice(5, 10)
+            if (this.sent_emails[i].name.length > 20) {
+              this.sent_emails[i].name = this.sent_emails[i].name.slice(0, 20) + '...'
+            }
+            if (this.sent_emails[i].text.length > 65) {
+              this.sent_emails[i].text = this.sent_emails[i].text.slice(0, 65) + '...'
             }
           }
         })
@@ -258,11 +396,12 @@ export default {
           this.user = response.data
           const email_address = this.user.get_user_simple_data.email
           this.getEmails(email_address)
+          this.getSentEmails(email_address)
         })
         .catch(error => {
           console.log(error)
         })
-    }
+    },
   },
   mounted() {
     this.getUserInfo()
@@ -329,6 +468,11 @@ export default {
   transition: all 0.6s;
 }
 
+.move-to-left-special {
+  transform: translateX(-5%);
+  transition: all 0.6s;
+}
+
 .email-page {
   position: relative;
 }
@@ -377,7 +521,7 @@ export default {
 }
 
 #inbox-part .read-emails {
-  background-color: rgb(228, 226, 226);
+  background-color: rgb(237, 237, 237);
 }
 
 #write-email .box-header {
@@ -404,6 +548,10 @@ export default {
   border: none;
   border-bottom: 1px solid darkgray;
   border-top: 1px solid darkgray;
+}
+
+textarea {
+  font-family: 'Noto Serif Display', serif;
 }
 
 #write-email .receiver-address button {
