@@ -29,11 +29,11 @@
         </p>
       </div>
       <div class="column is-12 buttons">
-        <button class="button">
+        <button class="button" @click="replyOperation">
           <span><i class="fas fa-reply-all mr-3"></i></span>
           <span>Reply</span>
         </button>
-        <button class="button">
+        <button class="button" @click="shareOperation">
           <span><i class="fas fa-share mr-3"></i></span>
           <span>Share</span>
         </button>
@@ -42,21 +42,177 @@
           <span>Back</span>
         </button>
       </div>
+      <div class="column is-12" v-if="replyPart">
+        <div class="box columns is-multiline">
+          <div class="column is-12">
+            <p>
+              <span><i class="fas fa-reply-all mr-3"></i></span>
+              <span>{{ this.email.sender_address }}</span>
+            </p>
+          </div>
+          <div class="column is-12">
+            <textarea class="textarea" type="textarea" v-model="this.replyContent"></textarea>
+          </div>
+          <div class="column is-12">
+            <div class="file has-name is-left">
+              <label class="file-label">
+                <input class="file-input" type="file" @change="getFileName">
+                  <span class="file-cta">
+                  <span class="file-icon">
+                    <i class="fas fa-upload"></i>
+                  </span>
+                  <span class="file-label">
+                    Choose a file…
+                  </span>
+                </span>
+                <span class="file-name" v-if="this.replyFileName == ''">
+                  No File has been Selected...
+                </span>
+              </label>
+              <button class="button is-warning ml-3" @click="clearFile" v-if="this.attatchment != ''">
+                Clear
+              </button>
+            </div>
+          </div>
+          <div class="column is-12">
+            <div class="notification is-danger" v-if="errors.length">
+              <p v-for="error in errors" v-bind:key="error">{{ error }}</p>
+            </div>
+          </div>
+          <div class="column is-12">
+            <button class="button is-info" @click="replySent">Send</button>
+          </div>
+        </div>
+      </div>
+      <!-- Previous Email Part -->
+      <div class="reply-email-module" v-if="this.email.reply != null">
+        <div class="columns is-multiline">
+          <div class="column is-12">
+            <hr>
+            <p class="title">{{ this.previousEmail.name }}</p>
+          </div>
+          <div class="column is-10" id="subtitle-with-image">
+            <div class="image is-64x64">
+              <img :src="require('@/assets/icons8-man-in-yellow-striped-sweater.png')">
+            </div>
+            <p class="subtitle">
+              <span><b>{{ this.previousEmail.get_sender_username }}</b></span>
+              <span><b>&nbsp;&lt;{{ this.previousEmail.sender_address }}&gt; </b></span>
+            </p>
+          </div>
+          <div class="column is-2" id="date_sent">
+            <p>{{this.previousEmail.date_sent}}</p>
+          </div>
+          <div class="column is-12" id="email-content">
+            <div v-html="this.previousEmail.text"></div>
+          </div>
+          <div class="column is-12" id="attatchment-part" v-if="this.previousEmail.attatchment != null">
+            <p id="title">Attatchment</p>
+            <p id="content">
+              <a :href="'http://localhost:8000' + this.previousEmail.attatchment" target="_blank">
+                <span><i class="fas fa-file-download is-size-4 mr-3"></i></span>
+                <span>{{ this.previousFileName }}</span>
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import axios from 'axios'
+import {toast} from 'bulma-toast'
 export default {
     name: 'EmailDetail',
     data() {
       return {
+        previousEmail: {},
+        previousFileName: '',
+        user: {},
         email: {},
         fileName: '',
+        replyPart: false,
+        sharePart: false,
+        replyContent: '',
+        replyFileName: '',
+        attatchment: '',
+        errors: [],
       }
     },
     methods: {
+      clearFile() {
+        this.replyFileName = ''
+        this.attatchment = ''
+        const replyFileName = document.querySelector('.file-name')
+        replyFileName.textContent = 'No File has been Selected...'
+      },
+
+      getFileName() {
+        const fileInput = document.querySelector('input[type=file]')
+        
+        this.attatchment = fileInput.files[0].name
+        if (fileInput.files.length > 0) {
+          const replyFileName = document.querySelector('.file-name')
+          replyFileName.textContent = fileInput.files[0].name
+        }
+      },
+
+      replySent() {
+        this.errors = []
+
+        if (this.replyContent === '' && this.attatchment === '') {
+          this.errors.push('Email content could not be empty!')        
+        }
+
+        if (!this.errors.length) {
+          let file = document.querySelector('input[type=file]').files[0] 
+          let formData = new FormData()
+        
+          formData.append('topic', 'Re: ' + this.email.name)
+          formData.append('receiver_address', this.email.sender_address)
+          formData.append('sender_address', this.user.get_user_simple_data.email)
+          formData.append('text', this.replyContent)
+          formData.append('attachment', file)
+          formData.append('reply', this.email.id)   
+          let options = {
+                url: '/api/v1/emails/email/post/',
+                data: formData,
+                method: 'post',
+                processData: false,
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            }
+
+          axios(options)
+            .then(response => {
+              if (response.data.status == 200) {
+                toast({
+                  message: 'Reply has been sent successfully!',
+                  type: 'is-success',
+                  duration: 3000
+                })
+                location.href = '/email/'
+              } else {
+                toast({
+                  message: 'Reply could not be sent!',
+                  type: 'is-danger',
+                  duration: 3000
+                })
+              }
+            })
+            .catch(error => {
+              console.log(error)
+            })
+          }
+      },
+
+      replyOperation() {
+        this.replyPart = !this.replyPart
+        
+      },
       goBack() {
         this.$router.go(-1)
       },
@@ -75,7 +231,18 @@ export default {
           .get('/api/v1/emails/email/' + email_id)
           .then(response => {
             this.email = response.data
-
+            // Get previous email if it is a reply
+            if(this.email.reply != null) {
+              axios
+                .get('/api/v1/emails/email/' + this.email.reply)
+                .then(response => {
+                  this.previousEmail = response.data
+                  if(this.previousEmail.attatchment != null) {
+                    this.previousFileName = this.previousEmail.attatchment.split('/')[4]
+                  }
+                  this.previousEmail.date_sent = this.previousEmail.date_sent.split('T')[0]
+                })
+            }
             // Calc the time to check whether it has been created over 12 hours
             var time = new Date(this.email.date_sent)
             var now = new Date()
@@ -92,8 +259,8 @@ export default {
             if(this.email.attatchment!=null) {
               this.fileName = this.email.attatchment.split('/')[4]
             }
-
-            if (this.email.unread == 0) {
+            // Not set the status to read if clicked from the portal of Sent Before
+            if (this.email.unread == 0 && this.user.get_user_simple_data.email != this.email.sender_address) {
               this.setEmailStatusToRead(email_id)
             }
 
@@ -103,9 +270,22 @@ export default {
             console.log(error)
         })
       },
+
+      getActiveUserInfo() {
+        const user_id = localStorage.getItem('userid')
+        axios
+          .get('api/v1/users/' + user_id)
+          .then(response => {
+            this.user = response.data
+          })
+          .catch(error => {
+            console.log(error)
+          })
+      }
     },
     mounted() {
       this.getEmail()
+      this.getActiveUserInfo()
     },  
 }
 </script>
@@ -149,6 +329,10 @@ export default {
 
 #attatchment-part #content a:hover {
   text-decoration: underline;
+}
+
+textarea {
+  font-family: 'Noto Serif Display', serif;
 }
 
 @media screen and (max-width: 768px) { 

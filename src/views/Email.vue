@@ -172,7 +172,7 @@
                   <div class="box read-emails">
                     <div class="sender-username">
                       <p>
-                        <span>{{ email.get_receiver_username }}</span>
+                        <span>R: {{ email.get_receiver_username }}</span>
                         <span v-if="email.attatchment != null"><i class="fas fa-paperclip ml-3"></i></span>
                       </p>
                     </div>
