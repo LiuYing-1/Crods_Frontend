@@ -42,7 +42,8 @@
           <span>Back</span>
         </button>
       </div>
-      <div class="column is-12" v-if="replyPart">
+      <!-- Reply Extended Part -->
+      <div class="column is-12" v-if="replyPart" id="replyPart">
         <div class="box columns is-multiline">
           <div class="column is-12">
             <p>
@@ -81,6 +82,59 @@
           </div>
           <div class="column is-12">
             <button class="button is-info" @click="replySent">Send</button>
+          </div>
+        </div>
+      </div>
+      <!-- Share Extend Part -->
+      <div class="column is-12" v-if="sharePart" id="sharePart">
+        <div class="box columns is-multiline">
+          <div class="column is-12" id="forward-title">
+            <p>
+              <span><i class="fas fa-share mr-3"></i></span>
+              <span><b>Forward</b></span>
+            </p>
+          </div>
+          <div class="column is-12 input-module">
+            <p><b>Forward</b></p>
+            <input type="input" class="input" placeholder="e.g., xxx@crods.flyme.social" v-model="this.forwardTo"/>
+            <div class="check-buttons">
+              <button class="button is-light" v-if="this.forwardTo != ''" @click="checkValid(this.forwardTo)">Check</button>
+              <button class="button is-primary" v-if="this.valid == 1 && this.forwardTo != ''" disabled>Valid</button>
+              <button class="button is-danger" v-if="this.valid == 2 && this.forwardTo != ''" disabled>Invalid</button>
+            </div>
+          </div>
+          <div class="column is-12 input-module">
+            <p><b>Topic</b></p>
+            <input type="input" class="input" v-model="this.sharedTopic" />
+          </div>
+          <div class="column is-12">
+            <textarea type="textarea" class="textarea" v-model="this.sharedContent"></textarea>
+          </div>
+          <div class="column is-12">
+            <div class="file has-name is-left">
+              <label class="file-label">
+                <input class="file-input" type="file" disabled>
+                <span class="file-cta">
+                  <span class="file-label">
+                    <i class="fas fa-file-download"></i>
+                  </span>
+                </span>
+                <span class="file-name" v-if="this.sharedFile == ''">
+                  No File has been Selected...
+                </span>
+                <span class="file-name" v-if="this.sharedFile != ''">
+                  {{ this.sharedFileName }}
+                </span>
+              </label>
+            </div>
+          </div>
+          <div class="column is-12">
+            <div class="notification is-danger" v-if="errors.length">
+              <p v-for="error in errors" v-bind:key="error">{{ error }}</p>
+            </div>
+          </div>
+          <div class="column is-12">
+            <button class="button is-info" @click="sharedSent">Forward</button>
           </div>
         </div>
       </div>
@@ -139,13 +193,106 @@ export default {
         replyFileName: '',
         attatchment: '',
         errors: [],
+        // Shared Part
+        valid: 0,
+        forwardTo: '',
+        sharedTopic: 'Fw:',
+        sharedContent: '',
+        sharedFileName: '',
+        sharedFile: '',
       }
     },
     methods: {
+      checkValid(forwardTo) {
+      axios
+        .get(`api/v1/emails/${forwardTo}/check-valid/`)
+        .then(response => {
+          if (response.data.status == 200) {
+            this.valid = 1
+          } else if (response.data.status == 400){
+            this.valid = 2
+          }
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    },
+    // Forward Email - Share Sent
+      sharedSent() {
+        this.errors  = []
+        if (this.valid == 0) {
+          this.errors.push('Please check the email address before forwarding.')
+        }
+
+        if (this.forwardTo === '' || this.valid == 2) {
+          this.errors.push('Please enter the correct email address.')
+        }
+
+        if (this.sharedTopic === '') {
+          this.errors.push('Topic is missing!')        
+        }
+
+        if (this.sharedContent === '' && this.sharedFile === '') {
+          this.errors.push('Email content could not be empty!')        
+        }
+
+        if (!this.errors.length) {
+          let formData = new FormData()
+          
+          var file = new File([this.sharedFile], 'Fw-' + this.sharedFileName)
+
+          formData.append('topic', this.sharedTopic)
+          formData.append('receiver_address', this.forwardTo)
+          formData.append('sender_address', this.user.get_user_simple_data.email)
+          formData.append('text', this.sharedContent)
+          formData.append('attachment', file)
+          formData.append('reply', 'undefined')
+          
+          let options = {
+              url: '/api/v1/emails/email/post/',
+              data: formData,
+              method: 'post',
+              processData: false,
+              headers: {
+                  'Content-Type': 'multipart/form-data'
+              }
+          }
+
+          axios(options)
+          .then(response => {
+            if (response.data.status == 200) {
+              toast({
+                message: 'Email has been forward successfully!',
+                type: 'is-success',
+                duration: 3000
+              })
+              location.href = '/email/'
+            } else {
+              toast({
+                message: 'Email could not be forward!',
+                type: 'is-danger',
+                duration: 3000
+              })
+            }
+          })
+          .catch(error => {
+            console.log(error)
+          })
+        }
+      },
+
+      shareOperation() {
+        if (this.replyPart) {
+          this.replyPart = false
+        }
+        this.sharePart = !this.sharePart
+        this.sharedTopic = 'Fw: ' + this.email.name
+      },
+
       clearFile() {
         this.replyFileName = ''
         this.attatchment = ''
-        const replyFileName = document.querySelector('.file-name')
+        const replyFileName = document.querySelector('#replyPart .file-name')
         replyFileName.textContent = 'No File has been Selected...'
       },
 
@@ -154,7 +301,7 @@ export default {
         
         this.attatchment = fileInput.files[0].name
         if (fileInput.files.length > 0) {
-          const replyFileName = document.querySelector('.file-name')
+          const replyFileName = document.querySelector('#replyPart .file-name')
           replyFileName.textContent = fileInput.files[0].name
         }
       },
@@ -167,7 +314,7 @@ export default {
         }
 
         if (!this.errors.length) {
-          let file = document.querySelector('input[type=file]').files[0] 
+          let file = document.querySelector('#replyPart input[type=file]').files[0] 
           let formData = new FormData()
         
           formData.append('topic', 'Re: ' + this.email.name)
@@ -210,8 +357,10 @@ export default {
       },
 
       replyOperation() {
+        if (this.sharePart) {
+          this.sharePart = false
+        }
         this.replyPart = !this.replyPart
-        
       },
       goBack() {
         this.$router.go(-1)
@@ -253,10 +402,13 @@ export default {
             } else {
               this.email.date_sent = diffHours.toFixed(0) + ' hrs'
             }
-
+            let str = '----------------------------------------------'
+            this.sharedContent = '=> Original: <' + this.email.sender_address + '>\n\n' + this.email.text + '\n' + str
             this.email.text = this.email.text.replace(/\r\n/g, "<br>")
 
             if(this.email.attatchment!=null) {
+              this.sharedFile = this.email.attatchment
+              this.sharedFileName = this.sharedFile.split('/')[4]
               this.fileName = this.email.attatchment.split('/')[4]
             }
             // Not set the status to read if clicked from the portal of Sent Before
@@ -331,8 +483,31 @@ export default {
   text-decoration: underline;
 }
 
-textarea {
+textarea, input {
   font-family: 'Noto Serif Display', serif;
+}
+
+#forward-title {
+  color: white;
+  background-color: #363636;
+}
+
+.input-module {
+  display: flex;
+  align-items: center;
+}
+
+.input-module p {
+  margin-right: 1rem;
+  width: 5%;
+}
+
+.check-buttons {
+  display: flex;
+}
+
+.check-buttons .button {
+  margin: 0.1rem;
 }
 
 @media screen and (max-width: 768px) { 
@@ -346,6 +521,25 @@ textarea {
 
   .image {
     display: none;
+  }
+
+  .input-module {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .input-module p {
+    width: 100%;
+  }
+
+  .input-module input {
+    width: 100%;
+  }
+
+  .check-buttons {
+    margin-top: 1rem;
   }
 }
 </style>

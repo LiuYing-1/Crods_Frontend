@@ -44,8 +44,8 @@
                     <p>Receiver</p>
                     <input type="input" class="input" placeholder="e.g., @crods.flyme.social" v-model="this.ready_to_send" />
                     <button class="button is-light" v-if="this.ready_to_send != ''" @click="checkValid(this.ready_to_send)">Check</button>
-                    <button class="button is-primary" v-if="this.valid == 1" disabled>Valid</button>
-                    <button class="button is-danger" v-if="this.valid == 2" disabled>Invalid</button>
+                    <button class="button is-primary" v-if="this.valid == 1 && this.ready_to_send != ''" disabled>Valid</button>
+                    <button class="button is-danger" v-if="this.valid == 2 && this.ready_to_send != ''" disabled>Invalid</button>
                   </div>
                   <div class="column is-12 topic">
                     <p>Topic</p>
