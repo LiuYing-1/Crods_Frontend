@@ -239,7 +239,9 @@ export default {
         if (!this.errors.length) {
           let formData = new FormData()
           
-          var file = new File([this.sharedFile], 'Fw-' + this.sharedFileName)
+          if (this.sharedFile != '') {
+            var file = new File([this.sharedFile], 'Fw-' + this.sharedFileName)
+          }
 
           formData.append('topic', this.sharedTopic)
           formData.append('receiver_address', this.forwardTo)

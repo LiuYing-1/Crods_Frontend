@@ -9,11 +9,12 @@
 
     <!-- Below is the Email and Notification Part -->
     <div class="email-section">
-      <router-link to="/email">
+      <router-link to="/email" id="icon-part">
         <i class="fas fa-envelope" v-if="this.user.email.length != 0"></i>
+        <i class="fas fa-exclamation" v-if="this.unread_num != 0"></i>
       </router-link>
-      <a><i class="fas fa-envelope" v-if="this.user.email.length == 0" disabled></i></a>
-      <p class="tips" v-if="this.user.email.length != 0">You have 0 unread message(s).</p>
+      <p class="tips" v-if="this.user.email.length != 0">You have {{this.unread_num}} unread message(s).</p>
+      <a><i class="fas fa-envelope" v-if="this.user.email.length == 0"></i></a>
       <p class="tips" v-if="this.user.email.length == 0">You don't register your email.</p>
     </div>
 
@@ -567,6 +568,8 @@ export default {
         // Admin Part
         presessions: [],
         distributions: [],
+        // Unread Email
+        unread_num: 0,
       }
     },
     methods: {
@@ -580,6 +583,23 @@ export default {
 
           this.$router.push('/')
         },
+      
+      // Get Emails if user email address exists
+      getEmails(address){
+        axios
+          .get(`api/v1/emails/${address}/`)
+          .then(response => {
+            let emails = response.data
+            for (let i = 0; i < emails.length; i++) {
+              if (emails[i].unread == 0) {
+                this.unread_num =+ 1
+              }
+            }
+          })
+          .catch(error => {
+            console.log(error)
+          })
+      },
 
       async getUserData() {
         this.$store.commit('setIsLoading', true)
@@ -598,6 +618,7 @@ export default {
                 balance: response.data.balance,
                 reputation: response.data.reputation,
               }
+              this.getEmails(this.user.email)
             })
             .catch(error => {
               console.log(error)
@@ -1199,6 +1220,11 @@ form input{
 .email-section a:hover + .tips {
   display: initial;
   transition: all 0.6s;
+}
+
+.fa-exclamation {
+  margin-left: 0.2rem;
+  color: rgb(233, 87, 87);
 }
 
 @media screen and (max-width: 768px) {
