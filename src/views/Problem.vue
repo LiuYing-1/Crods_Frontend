@@ -197,7 +197,7 @@
                   <div class="media-content">
                     <div class="content">
                       <p>
-                        <strong>{{ comment.get_username }}</strong>
+                        <router-link :to="'/user/' + comment.user" class="username"><strong>{{ comment.get_username }}</strong></router-link>
                         <br>
                         {{ comment.content }}
                         <br>
@@ -223,7 +223,7 @@
                           <div class="media-content">
                             <div class="content">
                               <p>
-                                <strong>{{ reply.get_username }}</strong>
+                                <router-link :to="'/user/' + reply.user" class="username"><strong>{{ reply.get_username }}</strong></router-link>
                                 <br>
                                 {{ reply.content }}
                                 <br>
@@ -762,6 +762,14 @@ textarea {
 
 input {
   font-family: 'Noto Serif Display', serif;
+}
+
+.username {
+  color: #363636;
+}
+
+.username :hover {
+  color: pink;
 }
 
 @media screen and (max-width: 800px) {
