@@ -586,19 +586,21 @@ export default {
       
       // Get Emails if user email address exists
       getEmails(address){
-        axios
-          .get(`api/v1/emails/${address}/`)
-          .then(response => {
-            let emails = response.data
-            for (let i = 0; i < emails.length; i++) {
-              if (emails[i].unread == 0) {
-                this.unread_num =+ 1
+        if (address != '') {
+          axios
+            .get(`api/v1/emails/${address}/`)
+            .then(response => {
+              let emails = response.data
+              for (let i = 0; i < emails.length; i++) {
+                if (emails[i].unread == 0) {
+                  this.unread_num =+ 1
+                }
               }
-            }
-          })
-          .catch(error => {
-            console.log(error)
-          })
+            })
+            .catch(error => {
+              console.log(error)
+            })
+        } 
       },
 
       async getUserData() {

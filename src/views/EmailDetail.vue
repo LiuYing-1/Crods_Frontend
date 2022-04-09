@@ -388,6 +388,7 @@ export default {
                 .get('/api/v1/emails/email/' + this.email.reply)
                 .then(response => {
                   this.previousEmail = response.data
+                  this.previousEmail.text = this.previousEmail.text.replace(/\r\n/g, "<br>")
                   if(this.previousEmail.attatchment != null) {
                     this.previousFileName = this.previousEmail.attatchment.split('/')[4]
                   }

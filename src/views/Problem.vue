@@ -155,6 +155,28 @@
           </div>
         </div>
 
+        <!-- Email to Poster -->
+        <div class="chat-to-poster column is-1" v-if="this.picker_address == ''">
+          <router-link to="/my-account"><p>
+            <span><i class="fas fa-grin-beam-sweat"></i></span>
+            <span>Sorry!Register | Login your email first.</span>
+          </p></router-link>
+        </div>
+        <div class="chat-to-poster column is-1" v-if="this.poster_address == ''">
+          <router-link to="/my-account"><p>
+            <span><i class="fas fa-grin-beam-sweat"></i></span>
+            <span>Sorry! Poster doesn't register email.</span>
+          </p></router-link>
+        </div>
+        <div class="chat-to-poster column is-1" v-if="this.picker_address != ''">
+          <router-link :to="'/email' + this.problem.get_absolute_url">
+            <p>
+              <span><i class="far fa-comment-dots"></i></span>
+              <span>Email To Poster</span>
+            </p>
+          </router-link>
+        </div>
+
         <!-- Comments Part Below -->
         <div class="column is-12" id="comments-part">
           <hr>
@@ -262,9 +284,42 @@ export default {
             errors: [],
             replyOn: false,
             inputContent: '',
+            // Email To Poster Part
+            picker_address: '',
+            poster_address: '',
         }
     },
     methods: {
+        // Email To Poster Part
+        // Get the current user's email address
+        checkCurrentEmailAddress() {
+          if (localStorage.getItem('userid') != null) {
+            const user_id = localStorage.getItem('userid')
+            axios
+              .get(`api/v1/users/${user_id}/`)
+              .then(response => {
+                if (response.status == 200) {
+                  this.picker_address = response.data.get_user_simple_data.email
+                }
+              })
+              .catch(error => {
+                console.log(error)
+              })
+          }
+        },
+        checkPosterEmailAddress(username) {
+          this.checkCurrentEmailAddress()
+          axios
+            .get(`api/v1/users/${username}/email-address/`)
+            .then(response => {
+              if (response.data.status == true) {
+                this.poster_address = response.data.email
+              }
+            })
+            .catch(error => {
+              console.log(error)
+            })
+        },
         // Like Operation
         likeOperation(id, category) {
           let comment = 0
@@ -481,6 +536,9 @@ export default {
                     // Get Related Comments
                     this.getComments(this.problem.id)
 
+                    // Get the Poster's Email by Poster's username
+                    this.checkPosterEmailAddress(this.problem.get_username)
+
                     document.title = this.problem.name + ' | FlyMeCrods'
                 })
                 .catch(error => {
@@ -661,6 +719,37 @@ export default {
   z-index: 1;
 }
 
+.chat-to-poster {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.chat-to-poster a p {
+  color: white;
+  padding: 0.6rem;
+  border-radius: 0.3rem;
+  writing-mode: vertical-rl;
+  background-color: #363636;
+}
+
+.chat-to-poster a :hover {
+  background-color: #f03a5f;
+  transition: all 0.6s;
+}
+
+.chat-to-poster a p i {
+  margin-bottom: 0.5rem;
+}
+
+.fa-comment-dots {
+  transform: rotate(90deg);
+}
+
+.fa-grin-beam-sweat {
+  transform: rotate(90deg);
+}
+
 textarea {
   font-family: 'Noto Serif Display', serif;
 }
@@ -689,6 +778,24 @@ input {
   }
   .media .image {
     display: none;
+  }
+  .chat-to-poster {
+    justify-content: center;
+    align-items: center;
+  }
+  .chat-to-poster a p {
+    writing-mode: horizontal-tb;
+  }
+  .chat-to-poster a p i {
+    margin-bottom: 0;
+    margin-right: 0.5rem;
+  }
+
+  .fa-comment-dots {
+    transform: rotate(0deg);
+  }
+  .fa-grin-beam-sweat {
+    transform: rotate(0deg);
   }
 }
 </style>
