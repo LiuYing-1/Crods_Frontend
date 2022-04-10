@@ -48,15 +48,18 @@
           <p class="content" v-if="this.user.email == ''">Haven't Registered</p>
         </div>
       </div>
-      <div class="column box is-12 mt-3">
+      <div class="column box is-12 mt-3" id="posts-module">
         <p class="subtitle"><b>Posts Module</b></p>
         <p v-if="this.posted_problems.length == 0">{{ this.user.username }} hasn't posted any problems till now.</p>
         <div v-if="this.posted_problems.length != 0">
           <button class="button is-light" @click="this.viewAllPostedProblems =! this.viewAllPostedProblems">View All Posted Problems</button>
           <div class="all-posted-problems" v-if="this.viewAllPostedProblems">
-            <div v-for="problem in this.posted_problems" v-bind:key="problem.id">
-              {{problem.name}}
-            </div>
+            <span v-for="problem in this.posted_problems" v-bind:key="problem.id">
+              {{problem.name}} |
+            </span>
+          </div>
+          <div class="posted-problems-chart">
+            <v-chart class="vuechart" :option="option" />
           </div>
         </div>
       </div>
@@ -66,6 +69,7 @@
 
 <script>
 import axios from 'axios'
+import {toRaw} from '@vue/reactivity'
 export default {
     name: 'UserProfile',
     data() {
@@ -74,6 +78,39 @@ export default {
         user: {},
         posted_problems: [],
         viewAllPostedProblems: false,
+        posted_times: [],
+        accepted_solutions: [],
+        processed_times: [],
+        // Chart Options
+        option: {
+          textStyle: {
+              fontFamily: 'Noto Serif Display'
+          },
+          title: {
+            left: 'center',
+            text: 'Posted Problems'
+          },
+          tooltip: {},
+          legend: {
+            top: '30px',
+            left: 'center',
+            data: ['Posts']
+          },
+          xAxis: {
+            data: []
+          },
+          yAxis: {},
+          series: [
+            {
+              name: 'Posts',
+              type: 'bar',
+              data: [],
+              itemStyle: {
+                borderRadius: [5, 5, 0, 0]
+              }
+            }
+          ],
+        }
       }
     },
     methods: {
@@ -89,8 +126,31 @@ export default {
           .get('api/v1/users/' + user_check_id + '/posted-problems/')
           .then(response => {
             this.posted_problems = response.data
+
+            this.posted_problems.forEach(problem => {
+              if (this.posted_times.filter(time => time.date == problem.date_posted.split('T')[0]).length == 0) {
+                this.posted_times.push({date: problem.date_posted.split('T')[0], count: 1})
+              } else {
+                this.posted_times.filter(time => time.date == problem.date_posted.split('T')[0])[0].count += 1
+              }
+            })
+            for (let i = this.posted_times.length-1; i >=0; i--) {
+              this.option.xAxis.data.push(this.posted_times[i].date)
+              this.option.series[0].data.push(this.posted_times[i].count)
+            }
           })
           .catch(error => {
+            console.log(error)
+          })
+      },
+      getEachProblemSolutions(problem){
+        axios
+          .get('api/v1/solutions/problem/' + problem.id)
+          .then(response => {
+            if (response.data.solution_result == 2) {
+              this.accepted_solutions.push(response.data)
+            }
+          }).catch(error => {
             console.log(error)
           })
       },
@@ -161,5 +221,34 @@ export default {
 
 .module .subtitle {
   font-weight: bold;
+}
+
+#posts-module {
+  position: relative;
+}
+
+#posts-module .button {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.posted-problems-chart {
+  margin-top: 2rem;
+  width: 50%;
+  height: 400px;
+}
+
+@font-face {
+  font-family: "Noto Serif Display";
+  src: local("Noto Serif Display"),
+  url(../fonts/NotoSerifDisplay/static/NotoSerifDisplay/NotoSerifDisplay-Regular.ttf),
+}
+
+@media screen and (max-width: 768px) {
+  .posted-problems-chart {
+    width: 100%;
+    height: 250px;
+  }
 }
 </style>
