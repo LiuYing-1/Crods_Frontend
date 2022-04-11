@@ -80,7 +80,9 @@ export default {
         viewAllPostedProblems: false,
         posted_times: [],
         accepted_solutions: [],
-        processed_times: [],
+        accepted_times: [],
+        rejected_solutions: [],
+        rejected_times: [],
         // Chart Options
         option: {
           textStyle: {
@@ -88,13 +90,13 @@ export default {
           },
           title: {
             left: 'center',
-            text: 'Posted Problems / Accepted Solutions'
+            text: 'Posted Problems / Solutions Desicion'
           },
           tooltip: {},
           legend: {
             top: '30px',
             left: 'center',
-            data: ['Posted', 'Accepted']
+            data: ['Posted', 'Accepted', 'Rejected']
           },
           xAxis: {
             data: []
@@ -116,6 +118,14 @@ export default {
               itemStyle: {
                 borderRadius: [5, 5, 0, 0]
               }
+            },
+            {
+              name: 'Rejected',
+              type: 'bar',
+              data: [],
+              itemStyle: {
+                borderRadius: [5, 5, 0, 0]
+              }
             }
           ],
         }
@@ -128,13 +138,16 @@ export default {
           buttons[i].classList.toggle('move-in')
         }
       },
-      getUserPostedProblems() {
-        const user_check_id = this.$route.params.user_id
-        axios
-          .get('api/v1/users/' + user_check_id + '/posted-problems/')
-          .then(response => {
-            this.posted_problems = response.data
 
+      drawBarChart(){
+        axios
+          .all([
+            axios.get('api/v1/users/' + this.$route.params.user_id + '/posted-problems/'),
+            axios.get('api/v1/users/' + this.$route.params.user_id + '/accepted-solutions/'),
+            axios.get('api/v1/users/' + this.$route.params.user_id + '/rejected-solutions/')
+          ])
+          .then(axios.spread((posted, accepted, rejected) => {
+            this.posted_problems = posted.data
             this.posted_problems.forEach(problem => {
               if (this.posted_times.filter(time => time.date == problem.date_posted.split('T')[0]).length == 0) {
                 this.posted_times.push({date: problem.date_posted.split('T')[0], count: 1})
@@ -142,34 +155,40 @@ export default {
                 this.posted_times.filter(time => time.date == problem.date_posted.split('T')[0])[0].count += 1
               }
             })
-          })
-          .catch(error => {
-            console.log(error)
-          })
-      },
-      // Draw Bar Chart
-      getRelatedDistributions() {
-        axios
-          .get('api/v1/users/' + this.$route.params.user_id + '/accepted-solutions/')
-          .then(response => {
-            this.accepted_solutions = response.data
+
+            this.accepted_solutions = accepted.data
             this.accepted_solutions.forEach(solution => {
-              if (this.processed_times.filter(time => time.date == solution.date_posted.split('T')[0]).length == 0) {
-                this.processed_times.push({date: solution.date_posted.split('T')[0], count: 1})
+              if (this.accepted_times.filter(time => time.date == solution.date_posted.split('T')[0]).length == 0) {
+                this.accepted_times.push({date: solution.date_posted.split('T')[0], count: 1})
               } else {
-                this.processed_times.filter(time => time.date == solution.date_posted.split('T')[0])[0].count += 1
+                this.accepted_times.filter(time => time.date == solution.date_posted.split('T')[0])[0].count += 1
               }
             })
+
+            this.rejected_solutions = rejected.data
+            this.rejected_solutions.forEach(solution => {
+              if (this.rejected_times.filter(time => time.date == solution.date_posted.split('T')[0]).length == 0) {
+                this.rejected_times.push({date: solution.date_posted.split('T')[0], count: 1})
+              } else {
+                this.rejected_times.filter(time => time.date == solution.date_posted.split('T')[0])[0].count += 1
+              }
+            })
+
             let all_dates = []
             toRaw(this.posted_times).forEach(time => {
               all_dates.push(time.date)
             })
-            toRaw(this.processed_times).forEach(time => {
+            toRaw(this.accepted_times).forEach(time => {
               if (all_dates.filter(date => date == time.date).length == 0) {
                 all_dates.push(time.date)
               }
             })
-            all_dates.sort()
+            toRaw(this.rejected_times).forEach(time => {
+              if (all_dates.filter(date => date == time.date).length == 0) {
+                all_dates.push(time.date)
+              }
+            })
+            this.all_dates = all_dates.sort()
             all_dates.forEach(date => {
               this.option.xAxis.data.push(date)
               if (toRaw(this.posted_times).filter(time => time.date == date).length == 0) {
@@ -177,16 +196,20 @@ export default {
               } else {
                 this.option.series[0].data.push(toRaw(this.posted_times).filter(time => time.date == date)[0].count)
               }
-              if (toRaw(this.processed_times).filter(time => time.date == date).length == 0) {
+              if (toRaw(this.accepted_times).filter(time => time.date == date).length == 0) {
                 this.option.series[1].data.push(0)
               } else {
-                this.option.series[1].data.push(toRaw(this.processed_times).filter(time => time.date == date)[0].count)
+                this.option.series[1].data.push(toRaw(this.accepted_times).filter(time => time.date == date)[0].count)
+              }
+              if (toRaw(this.rejected_times).filter(time => time.date == date).length == 0) {
+                this.option.series[2].data.push(0)
+              } else {
+                this.option.series[2].data.push(toRaw(this.rejected_times).filter(time => time.date == date)[0].count)
               }
             })
-          }).catch(error => {
-            console.log(error)
-          })
+          }))
       },
+
       getUser() {
         const user_check_id = this.$route.params.user_id
         axios
@@ -205,8 +228,7 @@ export default {
       }
     },
     mounted() {
-      this.getRelatedDistributions()
-      this.getUserPostedProblems()
+      this.drawBarChart()
       this.getUser()
     },
 }
