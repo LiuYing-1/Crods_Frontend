@@ -88,13 +88,13 @@ export default {
           },
           title: {
             left: 'center',
-            text: 'Posted Problems'
+            text: 'Posted Problems / Accepted Solutions'
           },
           tooltip: {},
           legend: {
             top: '30px',
             left: 'center',
-            data: ['Posts']
+            data: ['Posted', 'Accepted']
           },
           xAxis: {
             data: []
@@ -102,7 +102,15 @@ export default {
           yAxis: {},
           series: [
             {
-              name: 'Posts',
+              name: 'Posted',
+              type: 'bar',
+              data: [],
+              itemStyle: {
+                borderRadius: [5, 5, 0, 0]
+              }
+            },
+            {
+              name: 'Accepted',
               type: 'bar',
               data: [],
               itemStyle: {
@@ -134,22 +142,47 @@ export default {
                 this.posted_times.filter(time => time.date == problem.date_posted.split('T')[0])[0].count += 1
               }
             })
-            for (let i = this.posted_times.length-1; i >=0; i--) {
-              this.option.xAxis.data.push(this.posted_times[i].date)
-              this.option.series[0].data.push(this.posted_times[i].count)
-            }
           })
           .catch(error => {
             console.log(error)
           })
       },
-      getEachProblemSolutions(problem){
+      // Draw Bar Chart
+      getRelatedDistributions() {
         axios
-          .get('api/v1/solutions/problem/' + problem.id)
+          .get('api/v1/users/' + this.$route.params.user_id + '/accepted-solutions/')
           .then(response => {
-            if (response.data.solution_result == 2) {
-              this.accepted_solutions.push(response.data)
-            }
+            this.accepted_solutions = response.data
+            this.accepted_solutions.forEach(solution => {
+              if (this.processed_times.filter(time => time.date == solution.date_posted.split('T')[0]).length == 0) {
+                this.processed_times.push({date: solution.date_posted.split('T')[0], count: 1})
+              } else {
+                this.processed_times.filter(time => time.date == solution.date_posted.split('T')[0])[0].count += 1
+              }
+            })
+            let all_dates = []
+            toRaw(this.posted_times).forEach(time => {
+              all_dates.push(time.date)
+            })
+            toRaw(this.processed_times).forEach(time => {
+              if (all_dates.filter(date => date == time.date).length == 0) {
+                all_dates.push(time.date)
+              }
+            })
+            all_dates.sort()
+            all_dates.forEach(date => {
+              this.option.xAxis.data.push(date)
+              if (toRaw(this.posted_times).filter(time => time.date == date).length == 0) {
+                this.option.series[0].data.push(0)
+              } else {
+                this.option.series[0].data.push(toRaw(this.posted_times).filter(time => time.date == date)[0].count)
+              }
+              if (toRaw(this.processed_times).filter(time => time.date == date).length == 0) {
+                this.option.series[1].data.push(0)
+              } else {
+                this.option.series[1].data.push(toRaw(this.processed_times).filter(time => time.date == date)[0].count)
+              }
+            })
           }).catch(error => {
             console.log(error)
           })
@@ -172,6 +205,7 @@ export default {
       }
     },
     mounted() {
+      this.getRelatedDistributions()
       this.getUserPostedProblems()
       this.getUser()
     },
@@ -235,7 +269,7 @@ export default {
 
 .posted-problems-chart {
   margin-top: 2rem;
-  width: 50%;
+  width: 100%;
   height: 400px;
 }
 
