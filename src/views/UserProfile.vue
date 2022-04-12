@@ -58,8 +58,13 @@
               {{problem.name}} |
             </span>
           </div>
-          <div class="posted-problems-chart">
-            <v-chart class="vuechart" :option="option" />
+          <div class="charts">
+            <div class="posted-problems-chart">
+              <v-chart class="vuechart" :option="option" />
+            </div>
+            <div class="posted-problems-fields-chart">
+              <v-chart class="vuechart" :option="option2" />
+            </div>
           </div>
         </div>
       </div>
@@ -83,14 +88,14 @@ export default {
         accepted_times: [],
         rejected_solutions: [],
         rejected_times: [],
-        // Chart Options
+        // Chart Options - Bar Chart
         option: {
           textStyle: {
               fontFamily: 'Noto Serif Display'
           },
           title: {
             left: 'center',
-            text: 'Posted Problems / Solutions Desicion'
+            text: 'Posted Problems / Solution Desicions'
           },
           tooltip: {},
           legend: {
@@ -128,6 +133,64 @@ export default {
               }
             }
           ],
+        },
+        // Pie Chart
+        fields_num: [],
+        option2: {
+          textStyle: {
+              fontFamily: 'Noto Serif Display'
+          },
+          title: {
+            left: 'center',
+            text: 'Posted Problems Fields Ratio',
+          },
+          tooltip: {
+            trigger: 'item',
+          },
+          visualMap: {
+            show: false,
+            min: 0,
+            max: 100,
+            inRange: {
+              colorLightness: [0, 1]
+            }
+          },
+          legend: {
+            top: '30px',
+            left: 'center',
+            data: []
+          },
+          series: [
+            {
+              name: 'Field',
+              type: 'pie',
+              radius: '55%',
+              center: ['50%', '50%'],
+              data: [],
+              roseType: 'radius',
+              label: {
+                color: '#363636'
+              },
+              itemStyle: {
+                color: '#c23531',
+                shadowBlur: 200,
+                shadowColor: 'white',
+              },
+              labelLine: {
+                lineStyle: {
+                  color: '#363636'
+                },
+                smooth: 0.2,
+                length: 10,
+                length2: 20
+              },
+              animationType: 'scale',
+              animationEasing: 'elasticOut',
+              animationDelay: function (idx) {
+                return Math.random() * 200;
+              }
+            },
+          ],
         }
       }
     },
@@ -147,6 +210,7 @@ export default {
             axios.get('api/v1/users/' + this.$route.params.user_id + '/rejected-solutions/')
           ])
           .then(axios.spread((posted, accepted, rejected) => {
+            // Part for Bar Chart
             this.posted_problems = posted.data
             this.posted_problems.forEach(problem => {
               if (this.posted_times.filter(time => time.date == problem.date_posted.split('T')[0]).length == 0) {
@@ -173,7 +237,7 @@ export default {
                 this.rejected_times.filter(time => time.date == solution.date_posted.split('T')[0])[0].count += 1
               }
             })
-
+            // Part for Pie Chart
             let all_dates = []
             toRaw(this.posted_times).forEach(time => {
               all_dates.push(time.date)
@@ -207,6 +271,21 @@ export default {
                 this.option.series[2].data.push(toRaw(this.rejected_times).filter(time => time.date == date)[0].count)
               }
             })
+            let fields = []
+            this.posted_problems.forEach(problem => {
+              if (fields.filter(field => field == problem.get_tagname).length == 0) {
+                fields.push(problem.get_tagname)
+                this.option2.legend.data.push(problem.get_tagname)
+              }
+            })
+            fields.forEach(field => {
+                let count = this.posted_problems.filter(problem => problem.get_tagname == field).length
+                this.fields_num.push({name: field, value: count})
+              }
+            )
+            this.fields_num.sort(function(a, b) { return a.value - b.value; })
+            this.option2.series[0].data = this.fields_num
+            this.option2.visualMap.max = this.fields_num[this.fields_num.length - 1].value+0.5
           }))
       },
 
@@ -220,6 +299,8 @@ export default {
             this.user.username = this.user.get_user_simple_data.username
             this.user.email = this.user.get_user_simple_data.email
             
+            // Upper Case the first letter of username
+            this.user.username = this.user.username.charAt(0).toUpperCase() + this.user.username.slice(1)
             document.title = 'Profile | ' + this.user.username + ' | FlyMeCrods'
           })
           .catch(error => {
@@ -295,6 +376,12 @@ export default {
   height: 400px;
 }
 
+.posted-problems-fields-chart {
+  margin-top: 2rem;
+  width: 50%;
+  height: 400px;
+}
+
 @font-face {
   font-family: "Noto Serif Display";
   src: local("Noto Serif Display"),
@@ -305,6 +392,12 @@ export default {
   .posted-problems-chart {
     width: 100%;
     height: 250px;
+  }
+
+  .posted-problems-fields-chart {
+    margin-top: 2rem;
+    width: 100%;
+    height: 400px;
   }
 }
 </style>
