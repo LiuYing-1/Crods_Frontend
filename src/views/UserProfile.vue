@@ -58,13 +58,21 @@
               {{problem.name}} |
             </span>
           </div>
+          <div class="posted-problems-chart">
+            <v-chart class="vuechart" :option="option" />
+          </div>
           <div class="charts">
-            <div class="posted-problems-chart">
-              <v-chart class="vuechart" :option="option" />
-            </div>
             <div class="posted-problems-fields-chart">
               <v-chart class="vuechart" :option="option2" />
             </div>
+            <div class="posted-problems-decisions-chart">
+              <v-chart class="vuechart" :option="option3" />
+            </div>
+          </div>
+          <div class="ratio-part">
+            <p><b>Last Active Date:</b> {{this.all_dates[(this.all_dates.length-1)]}}</p>
+            <p><b>Field of Posted Most:</b> {{this.posted_most_problems_field}}</p>
+            <p><b>Solution Already Accepted Ratio:</b> {{this.accepted_solutions_ratio}}%</p>
           </div>
         </div>
       </div>
@@ -82,12 +90,14 @@ export default {
         check_index: 0,
         user: {},
         posted_problems: [],
+        posted_most_problems_field: [],
         viewAllPostedProblems: false,
         posted_times: [],
         accepted_solutions: [],
         accepted_times: [],
         rejected_solutions: [],
         rejected_times: [],
+        accepted_solutions_ratio: 0,
         // Chart Options - Bar Chart
         option: {
           textStyle: {
@@ -95,7 +105,7 @@ export default {
           },
           title: {
             left: 'center',
-            text: 'Posted Problems / Solution Desicions'
+            text: 'User Active Time Record',
           },
           tooltip: {},
           legend: {
@@ -191,7 +201,37 @@ export default {
               }
             },
           ],
-        }
+        },
+        option3: {
+          textStyle: {
+              fontFamily: 'Noto Serif Display'
+          },
+          title: {
+            left: 'center',
+            text: 'Solution Desicions Ratio',
+          },
+          tooltip: {
+            trigger: 'item',
+          },
+          legend: {
+            orient: 'vertical',
+            left: 'left',
+            data: ['Accepted', 'Rejected']
+          },
+          series: [{
+            name: 'Solution Desicions',
+            type: 'pie',
+            radius: '50%',
+            data: [],
+          }],
+          emphasis: {
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.5)'
+            }
+          }
+        },
       }
     },
     methods: {
@@ -285,7 +325,18 @@ export default {
             )
             this.fields_num.sort(function(a, b) { return a.value - b.value; })
             this.option2.series[0].data = this.fields_num
-            this.option2.visualMap.max = this.fields_num[this.fields_num.length - 1].value+0.5
+            if (this.fields_num.length > 0) {
+              this.option2.visualMap.max = this.fields_num[this.fields_num.length - 1].value+0.5
+            }
+            this.posted_most_problems_field = this.fields_num[(this.fields_num).length-1].name
+            // Part for Solution Desicions Ratio
+            this.option3.series[0].data = [
+              {value: this.accepted_solutions.length, name: 'Accepted', itemStyle: {color: '#363636'}},
+              {value: this.rejected_solutions.length, name: 'Rejected', itemStyle: {color: 'lightgray'}},
+            ]
+            if (this.accepted_solutions != 0) {
+              this.accepted_solutions_ratio = (this.accepted_solutions.length / (this.accepted_solutions.length + this.rejected_solutions.length)).toFixed(2) * 100
+            }
           }))
       },
 
@@ -376,10 +427,26 @@ export default {
   height: 400px;
 }
 
+.charts {
+  display: flex;
+}
+
 .posted-problems-fields-chart {
   margin-top: 2rem;
   width: 50%;
   height: 400px;
+}
+
+.posted-problems-decisions-chart {
+  margin-top: 2rem;
+  width: 50%;
+  height: 400px;
+}
+
+.ratio-part {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
 }
 
 @font-face {
@@ -394,10 +461,27 @@ export default {
     height: 250px;
   }
 
+  .charts {
+    display: flex;
+    flex-direction: column;
+  }
+
   .posted-problems-fields-chart {
     margin-top: 2rem;
     width: 100%;
     height: 400px;
+  }
+
+  .posted-problems-decisions-chart {
+    margin-top: 2rem;
+    width: 100%;
+    height: 400px;
+  }
+
+  .ratio-part {
+    display: flex;
+    flex-direction: column;
+    align-items: space-around;
   }
 }
 </style>
