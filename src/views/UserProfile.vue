@@ -23,11 +23,11 @@
         <p class="title">{{ this.user.username }}</p>
       </div>
       <div class="column is-5 userinfo-detail">
-        <div class="posts module">
+        <div class="posts module" @click="this.check_index = 1">
           <p class="subtitle">Post(s)</p>
           <p class="content">{{ this.user.posts_num }}</p>
         </div>
-        <div class="picks module">
+        <div class="picks module" @click="this.check_index = 2">
           <p class="subtitle">Pick(s)</p>
           <p class="content">{{ this.user.picks_num }}</p>
         </div>
@@ -48,14 +48,15 @@
           <p class="content" v-if="this.user.email == ''">Haven't Registered</p>
         </div>
       </div>
-      <div class="column box is-12 mt-3" id="posts-module">
+      <div class="column box is-12 mt-3" id="posts-module" v-if="this.check_index == 1">
         <p class="subtitle"><b>Posts Module</b></p>
         <p v-if="this.posted_problems.length == 0">{{ this.user.username }} hasn't posted any problems till now.</p>
         <div v-if="this.posted_problems.length != 0">
           <button class="button is-light" @click="this.viewAllPostedProblems =! this.viewAllPostedProblems">View All Posted Problems</button>
           <div class="all-posted-problems" v-if="this.viewAllPostedProblems">
-            <span v-for="problem in this.posted_problems" v-bind:key="problem.id">
-              {{problem.name}} |
+            <span v-for="(problem, index) in this.posted_problems" v-bind:key="problem.id">
+              <span v-if="index != 0">|</span>
+              <router-link :to="problem.get_absolute_url">{{problem.name}}</router-link>
             </span>
           </div>
           <div class="posted-problems-chart">
@@ -70,9 +71,31 @@
             </div>
           </div>
           <div class="ratio-part">
-            <p><b>Last Active Date:</b> {{this.all_dates[(this.all_dates.length-1)]}}</p>
+            <p><b>Last Posted / Decisided Date:</b> {{this.all_dates[(this.all_dates.length-1)]}}</p>
             <p><b>Field of Posted Most:</b> {{this.posted_most_problems_field}}</p>
             <p><b>Solution Already Accepted Ratio:</b> {{this.accepted_solutions_ratio}}%</p>
+          </div>
+        </div>
+      </div>
+      <div class="column box is-12 mt-3" id="posts-module" v-if="this.check_index == 2">
+        <p class="subtitle"><b>Picks Module</b></p>
+        <p v-if="this.picked_problems.length == 0">{{ this.user.username }} hasn't picked any problems till now.</p>
+        <div v-if="this.picked_problems.length != 0">
+          <div class="picked-problems-chart">
+            <v-chart class="vuechart" :option="option4" />
+          </div>
+          <div class="charts">
+            <div class="picked-problems-fields-chart">
+              <v-chart class="vuechart" :option="option5" />
+            </div>
+            <div class="picked-problems-desicions-chart">
+              <v-chart class="vuechart" :option="option6" />
+            </div>
+          </div>
+          <div class="ratio-part">
+            <p><b>Last Submitted / Picked Date:</b> {{this.all_dates2[(this.all_dates2.length-1)]}}</p>
+            <p><b>Field of Picked Most:</b> {{this.picked_most_problems_field}}</p>
+            <p><b>Solution Accepted Ratio:</b> {{this.accepted_solutions_ratio2}}%</p>
           </div>
         </div>
       </div>
@@ -87,7 +110,7 @@ export default {
     name: 'UserProfile',
     data() {
       return {
-        check_index: 0,
+        check_index: 1,
         user: {},
         posted_problems: [],
         posted_most_problems_field: [],
@@ -105,7 +128,7 @@ export default {
           },
           title: {
             left: 'center',
-            text: 'User Active Time Record',
+            text: 'User Active Time Record - Posted',
           },
           tooltip: {},
           legend: {
@@ -123,6 +146,7 @@ export default {
               type: 'bar',
               data: [],
               itemStyle: {
+                color: '#abd8cd',
                 borderRadius: [5, 5, 0, 0]
               }
             },
@@ -131,6 +155,7 @@ export default {
               type: 'bar',
               data: [],
               itemStyle: {
+                color: '#ddefe3',
                 borderRadius: [5, 5, 0, 0]
               }
             },
@@ -139,6 +164,7 @@ export default {
               type: 'bar',
               data: [],
               itemStyle: {
+                color: '#f6c6a9',
                 borderRadius: [5, 5, 0, 0]
               }
             }
@@ -232,6 +258,144 @@ export default {
             }
           }
         },
+        // Picks Module
+        picked_problems: [],
+        user_solutions: [],
+        passed_presessions: [],
+        presession_times: [],
+        submitted_times: [],
+        distributions: [],
+        fields_num2: [],
+        picked_most_problems_field: [],
+        accepted_solutions_ratio2: 0,
+        all_dates2: [],
+        option4: {
+          textStyle: {
+              fontFamily: 'Noto Serif Display'
+          },
+          title: {
+            left: 'center',
+            text: 'User Active Time Record - Picked',
+          },
+          tooltip: {
+            trigger: 'item',
+          },
+          legend: {
+            top: '30px',
+            left: 'center',
+            data: ['Picked', 'Submitted']
+          },
+          xAxis: {
+            data: []
+          },
+          yAxis: {},
+          series: [
+            {
+              name: 'Picked',
+              type: 'bar',
+              data: [],
+              itemStyle: {
+                color: '#f7bec7',
+                borderRadius: [5, 5, 0, 0]
+              }
+            },
+            {
+              name: 'Submitted',
+              type: 'bar',
+              data: [],
+              itemStyle: {
+                color: '#f39a9d',
+                borderRadius: [5, 5, 0, 0]
+              }
+            }
+          ],
+        },
+        option5: {
+          textStyle: {
+              fontFamily: 'Noto Serif Display'
+          },
+          title: {
+            left: 'center',
+            text: 'Picked Problems Fields Ratio',
+          },
+          tooltip: {
+            trigger: 'item',
+          },
+          visualMap: {
+            show: false,
+            min: 0,
+            max: 100,
+            inRange: {
+              colorLightness: [0, 1]
+            }
+          },
+          legend: {
+            top: '30px',
+            left: 'center',
+            data: []
+          },
+          series: [
+            {
+              name: 'Field',
+              type: 'pie',
+              radius: '55%',
+              center: ['50%', '50%'],
+              data: [],
+              roseType: 'radius',
+              label: {
+                color: '#363636'
+              },
+              itemStyle: {
+                color: '#365356',
+                shadowBlur: 200,
+                shadowColor: 'white',
+              },
+              labelLine: {
+                lineStyle: {
+                  color: '#363636'
+                },
+                smooth: 0.2,
+                length: 10,
+                length2: 20
+              },
+              animationType: 'scale',
+              animationEasing: 'elasticOut',
+              animationDelay: function (idx) {
+                return Math.random() * 200;
+              }
+            },
+          ],
+        },
+        option6: {
+          textStyle: {
+              fontFamily: 'Noto Serif Display'
+          },
+          title: {
+            left: 'center',
+            text: 'Submitted Desicions Ratio',
+          },
+          tooltip: {
+            trigger: 'item',
+          },
+          legend: {
+            orient: 'vertical',
+            left: 'left',
+            data: ['Accepted', 'Rejected']
+          },
+          series: [{
+            name: 'Submitted Desicions',
+            type: 'pie',
+            radius: '50%',
+            data: [],
+          }],
+          emphasis: {
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.5)'
+            }
+          }
+        }
       }
     },
     methods: {
@@ -242,7 +406,7 @@ export default {
         }
       },
 
-      drawBarChart(){
+      drawPostsModuleChart(){
         axios
           .all([
             axios.get('api/v1/users/' + this.$route.params.user_id + '/posted-problems/'),
@@ -327,17 +491,116 @@ export default {
             this.option2.series[0].data = this.fields_num
             if (this.fields_num.length > 0) {
               this.option2.visualMap.max = this.fields_num[this.fields_num.length - 1].value+0.5
+              this.posted_most_problems_field = this.fields_num[(this.fields_num).length-1].name
             }
-            this.posted_most_problems_field = this.fields_num[(this.fields_num).length-1].name
             // Part for Solution Desicions Ratio
             this.option3.series[0].data = [
               {value: this.accepted_solutions.length, name: 'Accepted', itemStyle: {color: '#363636'}},
               {value: this.rejected_solutions.length, name: 'Rejected', itemStyle: {color: 'lightgray'}},
             ]
             if (this.accepted_solutions != 0) {
-              this.accepted_solutions_ratio = (this.accepted_solutions.length / (this.accepted_solutions.length + this.rejected_solutions.length)).toFixed(2) * 100
+              this.accepted_solutions_ratio = (this.accepted_solutions.length / (this.accepted_solutions.length + this.rejected_solutions.length)).toFixed(4) * 100
             }
           }))
+      },
+
+      // Part for Picked Module Chart
+      drawPicksModuleChart() {
+        const user_id = this.$route.params.user_id
+        axios
+          .all([
+            axios.get(`api/v1/solutions/${user_id}/`),
+            axios.get(`api/v1/users/${user_id}/passed-presessions/`),
+            axios.get(`api/v1/users/${user_id}/picked-problems/`),
+            axios.get(`api/v1/users/${user_id}/distributions/`)
+          ])
+          .then(axios.spread((solutions, presessions, picked_problems, distributions) => {
+            this.user_solutions = solutions.data
+            this.passed_presessions = presessions.data
+            this.picked_problems = picked_problems.data
+            this.distributions = distributions.data
+
+            this.passed_presessions.forEach(presession => {
+              if (this.presession_times.filter(time => time.date == presession.date_result.split('T')[0]).length == 0) {
+                this.presession_times.push({date: presession.date_result.split('T')[0], count: 1})
+              } else {
+                this.presession_times.filter(time => time.date == presession.date_result.split('T')[0])[0].count += 1
+              }
+            })
+
+            this.distributions.forEach(distribution => {
+              if (this.submitted_times.filter(time => time.date == distribution.date_posted.split('T')[0]).length == 0) {
+                this.submitted_times.push({date: distribution.date_posted.split('T')[0], count: 1})
+              } else {
+                this.submitted_times.filter(time => time.date == distribution.date_posted.split('T')[0])[0].count += 1
+              }
+            })
+
+            let all_dates = []
+            toRaw(this.presession_times).forEach(time => {
+              all_dates.push(time.date)
+            })
+            toRaw(this.submitted_times).forEach(time => {
+              if (all_dates.filter(date => date == time.date).length == 0) {
+                all_dates.push(time.date)
+              }
+            })
+            all_dates.sort()
+            this.all_dates2 = all_dates
+            all_dates.forEach(date => {
+              this.option4.xAxis.data.push(date)
+              if (toRaw(this.presession_times).filter(time => time.date == date).length == 0) {
+                this.option4.series[0].data.push(0)
+              } else {
+                this.option4.series[0].data.push(toRaw(this.presession_times).filter(time => time.date == date)[0].count)
+              }
+              if (toRaw(this.submitted_times).filter(time => time.date == date).length == 0) {
+                this.option4.series[1].data.push(0)
+              } else {
+                this.option4.series[1].data.push(toRaw(this.submitted_times).filter(time => time.date == date)[0].count)
+              }
+            })
+            
+            let fields = []
+            this.picked_problems.forEach(problem => {
+              if (fields.filter(field => field == problem.get_tagname).length == 0) {
+                fields.push(problem.get_tagname)
+                this.option5.legend.data.push(problem.get_tagname)
+              }
+            })
+            fields.forEach(field => {
+                let count = this.picked_problems.filter(problem => problem.get_tagname == field).length
+                this.fields_num2.push({name: field, value: count})
+              }
+            )
+            toRaw(this.fields_num2).sort(function(a, b) { return a.value - b.value; })
+            this.option5.series[0].data = this.fields_num2
+            if (toRaw(this.fields_num2).length > 0) {
+              this.option5.visualMap.max = toRaw(this.fields_num2)[toRaw(this.fields_num2).length - 1].value+0.5
+              this.picked_most_problems_field = toRaw(this.fields_num2)[toRaw(this.fields_num2).length-1].name
+            }
+
+            let submitted_accepted = []
+            let submitted_rejected = []
+            this.user_solutions.forEach(solution => {
+              if (solution.solution_result == 2) {
+                submitted_accepted.push(solution)
+              } else if (solution.solution_result == 3) {
+                submitted_rejected.push(solution)
+              }
+            })
+
+            this.option6.series[0].data = [
+              {value: submitted_accepted.length, name: 'Accepted', itemStyle: {color: '#b0988e'}},
+              {value: submitted_rejected.length, name: 'Rejected', itemStyle: {color: '#eee7df'}},
+            ]
+            if (this.submitted_accepted != 0) {
+              this.accepted_solutions_ratio2 = (submitted_accepted.length / (submitted_accepted.length + submitted_rejected.length)).toFixed(4) * 100
+            }
+          }))
+          .catch(error => {
+            console.log(error)
+          })
       },
 
       getUser() {
@@ -351,8 +614,8 @@ export default {
             this.user.email = this.user.get_user_simple_data.email
             
             // Upper Case the first letter of username
-            this.user.username = this.user.username.charAt(0).toUpperCase() + this.user.username.slice(1)
-            document.title = 'Profile | ' + this.user.username + ' | FlyMeCrods'
+            var converted_username = this.user.username.charAt(0).toUpperCase() + this.user.username.slice(1)
+            document.title = 'Profile | ' + converted_username + ' | FlyMeCrods'
           })
           .catch(error => {
             console.log(error)
@@ -360,7 +623,9 @@ export default {
       }
     },
     mounted() {
-      this.drawBarChart()
+      this.check_index = 1
+      this.drawPostsModuleChart()
+      this.drawPicksModuleChart()
       this.getUser()
     },
 }
@@ -411,6 +676,12 @@ export default {
   font-weight: bold;
 }
 
+.posts:hover > p, .picks:hover > p {
+  cursor: pointer;
+  color: #f0ffff;
+  transition: all 0.6s;
+}
+
 #posts-module {
   position: relative;
 }
@@ -419,6 +690,15 @@ export default {
   position: absolute;
   top: 0;
   right: 0;
+}
+
+.all-posted-problems a {
+  color: #363636;
+}
+
+.all-posted-problems a:hover {
+  color: pink;
+  transition: all 0.6s;
 }
 
 .posted-problems-chart {
@@ -438,6 +718,24 @@ export default {
 }
 
 .posted-problems-decisions-chart {
+  margin-top: 2rem;
+  width: 50%;
+  height: 400px;
+}
+
+.picked-problems-chart {
+  margin-top: 2rem;
+  width: 100%;
+  height: 400px;
+}
+
+.picked-problems-fields-chart {
+  margin-top: 2rem;
+  width: 50%;
+  height: 400px;
+}
+
+.picked-problems-desicions-chart {
   margin-top: 2rem;
   width: 50%;
   height: 400px;
@@ -473,6 +771,18 @@ export default {
   }
 
   .posted-problems-decisions-chart {
+    margin-top: 2rem;
+    width: 100%;
+    height: 400px;
+  }
+
+  .picked-problems-fields-chart {
+    margin-top: 2rem;
+    width: 100%;
+    height: 400px;
+  }
+
+  .picked-problems-desicions-chart {
     margin-top: 2rem;
     width: 100%;
     height: 400px;
