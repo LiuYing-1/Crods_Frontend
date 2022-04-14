@@ -98,6 +98,10 @@
                   <th>Reputation</th>
                   <td>{{ this.user.reputation }}</td>
                 </tr>
+                <tr>
+                  <th>Profile</th>
+                  <td><router-link :to="'/user/' + this.user_id">Portal</router-link></td>
+                </tr>
               </table>
             </div>
             <div class="column is-12">
@@ -325,6 +329,10 @@ export default {
 
 .table tr:nth-child(even) {
   background-color: #f2f2f2;
+}
+
+.table a {
+  color: #363636;
 }
 
 .detail-part {
