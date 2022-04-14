@@ -34,7 +34,7 @@
                 <a href="#global">Global</a>
                 <a href="#presession">Presession</a>
                 <a href="#distribution">Distribution</a>
-                <a href="#summary">Summary</a>
+                <a href="#sum">Summary</a>
               </div>
             </div>
           </div>
@@ -134,10 +134,38 @@
             </div>
           </div>
         </div>
-        <div class="column is-12" id="summary">
+        <div class="column is-12" id="sum">
           <div class="hero is-primary">
             <div class="hero-body">
               <div class="title">Summary</div>
+              <div class="box charts-module">
+                <div class="problems-module" v-if="this.all_problems.length == 0">
+                  <p><b>FlyMeCrods</b> hasn't received any problems posted by users right now...</p>
+                </div>
+                <div class="problems-module" v-if="this.all_problems.length != 0">
+                  <div class="platform-problems-chart">
+                    <v-chart class="vuechart" :option="option7" />
+                  </div>
+                  <div class="ratio-part">
+                    <p><b>Total Problems:</b> {{this.all_problems.length}}</p>
+                    <p><b>Total Presessions:</b> {{this.all_presessions.length}}</p>
+                    <p><b>Total Distributions:</b> {{this.all_distributions.length}}</p>
+                  </div>
+                  <hr>
+                  <div class="charts">
+                    <div class="platform-problems-fields-ratio-chart">
+                      <v-chart class="vuechart" :option="option8" />
+                    </div>
+                    <div class="platform-solutions-successed-ratio-chart">
+                      <v-chart class="vuechart" :option="option9" />
+                    </div>
+                  </div>
+                  <div class="ratio-part">
+                    <p><b>Field of Posted Most:</b> {{this.admin_posted_most_problems_field}}</p>
+                    <p><b>Successed Session Ratio:</b> {{this.platform_accepted_solutions_ratio}}%</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -772,7 +800,7 @@ export default {
         passed_presessions: [],
         presession_times: [],
         submitted_times: [],
-        distributions: [],
+        posted_distributions: [],
         fields_num2: [],
         picked_most_problems_field: [],
         accepted_solutions_ratio2: 0,
@@ -909,7 +937,169 @@ export default {
               shadowColor: 'rgba(0, 0, 0, 0.5)'
             }
           }
-        }
+        },
+        // Admin Charts
+        all_problems: [],
+        all_problems_posted_dates: [],
+        all_presessions: [],
+        all_presessions_dates: [],
+        all_distributions: [],
+        all_distributions_dates: [],
+        plateform_all_posted_dates: [],
+        admin_fields_num: [],
+        admin_posted_most_problems_field: [],
+        admin_all_solutions: [],
+        platform_accepted_solutions_ratio: 0,
+        option7: {
+          textStyle: {
+            fontFamily: 'Noto Serif Display'
+          },
+          title: {
+            left: 'center',
+            text: 'Problems Posted Date',
+          },
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+              type: 'shadow',
+              label: {
+                backgroundColor: '#6a7985'
+              }
+            }
+          },
+          legend: {
+            orient: 'vertical',
+            top: '30px',
+            left: 'right',
+            data: ['Problem', 'Presession', 'Distribution']
+          },
+          grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+          },
+          xAxis: {
+            type: 'value',
+          },
+          yAxis: {
+            data: []
+          },
+          series: [
+          {
+            name: 'Problem',
+            type: 'bar',
+            data: [],
+            itemStyle: {
+              color: '#725047',
+              borderRadius: [0, 5, 5, 0]
+            }
+          },
+          {
+            name: 'Presession',
+            type: 'bar',
+            data: [],
+            itemStyle: {
+              color: '#da9e6a',
+              borderRadius: [0, 5, 5, 0]
+            }
+          },
+          {
+            name: 'Distribution',
+            type: 'bar',
+            data: [],
+            itemStyle: {
+              color: '#f3e6c3',
+              borderRadius: [0, 5, 5, 0]
+            }
+          },
+        ]},
+        option8: {
+          textStyle: {
+              fontFamily: 'Noto Serif Display'
+          },
+          title: {
+            left: 'center',
+            text: 'All Problems Fields Ratio',
+          },
+          tooltip: {
+            trigger: 'item',
+          },
+          visualMap: {
+            show: false,
+            min: 0,
+            max: 100,
+            inRange: {
+              colorLightness: [0, 1]
+            }
+          },
+          legend: {
+            top: '30px',
+            left: 'center',
+            data: []
+          },
+          series: [
+            {
+              name: 'Field',
+              type: 'pie',
+              radius: '55%',
+              center: ['50%', '50%'],
+              data: [],
+              roseType: 'radius',
+              label: {
+                color: '#363636',
+              },
+              itemStyle: {
+                color: '#a18da8',
+                shadowBlur: 200,
+                shadowColor: 'white',
+              },
+              labelLine: {
+                lineStyle: {
+                  color: '#363636'
+                },
+                smooth: 0.2,
+                length: 10,
+                length2: 20
+              },
+              animationType: 'scale',
+              animationEasing: 'elasticOut',
+              animationDelay: function (idx) {
+                return Math.random() * 200;
+              }
+            },
+          ],
+        },
+        option9: {
+          textStyle: {
+              fontFamily: 'Noto Serif Display'
+          },
+          title: {
+            left: 'center',
+            text: 'Successed Session Ratio',
+          },
+          tooltip: {
+            trigger: 'item',
+          },
+          legend: {
+            left: 'center',
+            top: '30px',
+            data: []
+          },
+          series: [{
+            name: 'Submitted Desicions',
+            type: 'pie',
+            radius: '50%',
+            data: [],
+          }],
+          emphasis: {
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.5)'
+            }
+          }
+        },
       }
     },
     methods: {
@@ -1252,11 +1442,11 @@ export default {
             axios.get(`api/v1/users/${user_id}/picked-problems/`),
             axios.get(`api/v1/users/${user_id}/distributions/`)
           ])
-          .then(axios.spread((solutions, presessions, picked_problems, distributions) => {
+          .then(axios.spread((solutions, presessions, picked_problems, posted_distributions) => {
             this.user_solutions = solutions.data
             this.passed_presessions = presessions.data
             this.picked_problems = picked_problems.data
-            this.distributions = distributions.data
+            this.posted_distributions = posted_distributions.data
 
             this.passed_presessions.forEach(presession => {
               if (this.presession_times.filter(time => time.date == presession.date_result.split('T')[0]).length == 0) {
@@ -1266,7 +1456,7 @@ export default {
               }
             })
 
-            this.distributions.forEach(distribution => {
+            this.posted_distributions.forEach(distribution => {
               if (this.submitted_times.filter(time => time.date == distribution.date_posted.split('T')[0]).length == 0) {
                 this.submitted_times.push({date: distribution.date_posted.split('T')[0], count: 1})
               } else {
@@ -1340,6 +1530,123 @@ export default {
             console.log(error)
           })
       },
+
+      // Draw Charts for Admin
+      drawAdminCharts(){
+        if (localStorage.getItem('userid') == 1) {
+          axios.all([
+            axios.get(`api/v1/all-problems/`),
+            axios.get(`api/v1/all-presessions/`),
+            axios.get(`api/v1/all-distributions/`),
+            axios.get(`api/v1/all-solutions/`),
+          ])
+          .then(axios.spread((all_problems, all_presessions, all_distributions, all_solutions) => {
+            this.all_problems = all_problems.data
+  
+            this.all_problems.forEach(problem => {
+              if (this.all_problems_posted_dates.filter(time => time.date == problem.date_posted.split('T')[0]).length == 0) {
+                this.all_problems_posted_dates.push({date: problem.date_posted.split('T')[0], count: 1})
+              } else {
+                this.all_problems_posted_dates.filter(time => time.date == problem.date_posted.split('T')[0])[0].count += 1
+              }
+            })
+            
+            this.all_presessions = all_presessions.data
+            this.all_presessions.forEach(presession => {
+              if (this.all_presessions_dates.filter(time => time.date == presession.date_posted.split('T')[0]).length == 0) {
+                this.all_presessions_dates.push({date: presession.date_posted.split('T')[0], count: 1})
+              } else {
+                this.all_presessions_dates.filter(time => time.date == presession.date_posted.split('T')[0])[0].count += 1
+              }
+            })
+  
+            this.all_distributions = all_distributions.data
+            this.all_distributions.forEach(distribution => {
+              if (this.all_distributions_dates.filter(time => time.date == distribution.date_posted.split('T')[0]).length == 0) {
+                this.all_distributions_dates.push({date: distribution.date_posted.split('T')[0], count: 1})
+              } else {
+                this.all_distributions_dates.filter(time => time.date == distribution.date_posted.split('T')[0])[0].count += 1
+              }
+            })
+            
+            let all_dates = []
+            toRaw(this.all_problems_posted_dates).forEach(time => {
+              all_dates.push(time.date)
+            })
+            toRaw(this.all_presessions_dates).forEach(time => {
+              if (all_dates.filter(date => date == time.date).length == 0) {
+                all_dates.push(time.date)
+              }
+            })
+            toRaw(this.all_distributions_dates).forEach(time => {
+              if (all_dates.filter(date => date == time.date).length == 0) {
+                all_dates.push(time.date)
+              }
+            })
+  
+            this.plateform_all_posted_dates = all_dates.sort()
+            all_dates.forEach(date => {
+              this.option7.yAxis.data.push(date)
+              if (toRaw(this.all_problems_posted_dates).filter(time => time.date == date).length == 0) {
+                this.option7.series[0].data.push(0)
+              } else {
+                this.option7.series[0].data.push(toRaw(this.all_problems_posted_dates).filter(time => time.date == date)[0].count)
+              }
+              if (toRaw(this.all_presessions_dates).filter(time => time.date == date).length == 0) {
+                this.option7.series[1].data.push(0)
+              } else {
+                this.option7.series[1].data.push(toRaw(this.all_presessions_dates).filter(time => time.date == date)[0].count)
+              }
+              if (toRaw(this.all_distributions_dates).filter(time => time.date == date).length == 0) {
+                this.option7.series[2].data.push(0)
+              } else {
+                this.option7.series[2].data.push(toRaw(this.all_distributions_dates).filter(time => time.date == date)[0].count)
+              }
+            })
+
+            let fields = []
+            this.all_problems.forEach(problem => {
+              if (fields.filter(field => field == problem.get_tagname).length == 0) {
+                fields.push(problem.get_tagname)
+                this.option8.legend.data.push(problem.get_tagname)
+              }
+            })
+            fields.forEach(field => {
+                let count = this.all_problems.filter(problem => problem.get_tagname == field).length
+                this.admin_fields_num.push({name: field, value: count})
+              }
+            )
+            this.admin_fields_num.sort(function(a, b) { return a.value - b.value; })
+            this.option8.series[0].data = this.admin_fields_num
+            if (this.admin_fields_num.length > 0) {
+              this.option8.visualMap.max = this.admin_fields_num[this.admin_fields_num.length - 1].value+0.5
+              this.admin_posted_most_problems_field = this.admin_fields_num[(this.admin_fields_num).length-1].name
+            }
+
+            this.admin_all_solutions = all_solutions.data
+            let submitted_accepted = []
+            let submitted_rejected = []
+            this.admin_all_solutions.forEach(solution => {
+              if (solution.solution_result == 2) {
+                submitted_accepted.push(solution)
+              } else if (solution.solution_result == 3) {
+                submitted_rejected.push(solution)
+              }
+            })
+            this.option9.legend.data = ['Accepted', 'Rejected']
+            this.option9.series[0].data = [
+              {value: submitted_accepted.length, name: 'Accepted', itemStyle: {color: '#b0988e'}},
+              {value: submitted_rejected.length, name: 'Rejected', itemStyle: {color: '#eee7df'}},
+            ]
+            if (submitted_accepted != 0) {
+              this.platform_accepted_solutions_ratio = (submitted_accepted.length / (submitted_accepted.length + submitted_rejected.length)).toFixed(2) * 100
+            }
+          }))
+          .catch(error => {
+            console.log(error)
+          })
+        }
+      },
     },
     mounted() {
         document.title = "My Account | FlyMeCrods"
@@ -1351,6 +1658,7 @@ export default {
 
         this.drawPostedCharts()
         this.drawPickedCharts()
+        this.drawAdminCharts()
       }
 }
 </script>
@@ -1826,6 +2134,21 @@ form input{
   height: 400px;
 }
 
+.platform-problems-chart {
+  width: 100%;
+  height: 450px;
+}
+
+.platform-problems-fields-ratio-chart {
+  width: 50%;
+  height: 450px;
+}
+
+.platform-solutions-successed-ratio-chart {
+  width: 50%;
+  height: 450px;
+}
+
 @media screen and (max-width: 768px) {
   form {
     flex-direction: column;
@@ -1980,6 +2303,21 @@ form input{
 
   .picked-problems-desicions-chart {
     width: 100%;
+  }
+
+  .platform-problems-chart {
+    width: 100%;
+    height: 450px;
+  }
+
+  .platform-problems-fields-ratio-chart {
+    width: 100%;
+    height: 450px;
+  }
+
+  .platform-solutions-successed-ratio-chart {
+    width: 100%;
+    height: 450px;
   }
 }
 </style>
