@@ -47,9 +47,17 @@
         <div class="column is-12">
           <h2 class="is-size-2 has-text-centered">{{ tag.name }}</h2>
         </div>
-  
+
+        <div class="column is-12 filter">
+          <div class="has-text-grey"><b>Status</b></div>
+          <p id="all" class="is-selected" @click="filterOperation('all')">All</p>
+          <p id="unaccepted" @click="filterOperation('unaccepted')">Unaccepted</p>
+          <p id="in-progress" @click="filterOperation('in-progress')">In Progress</p>
+          <p id="completed" @click="filterOperation('completed')">Completed</p>
+        </div>
+
         <ProblemBox 
-          v-for="problem in tag.problems"
+          v-for="problem in condition.problems"
           v-bind:key="problem.id"
           v-bind:problem="problem" />
       </div>
@@ -69,16 +77,35 @@ export default {
         return {
             tag: {
                 problems: []
+            },
+            condition: {
+                problems: [],
             }
         }
     },
     components: {
         ProblemBox
     },
-    mounted() {
-        this.getTag()
-    },
     methods: {
+        filterOperation(condition) {
+          document.querySelectorAll('.filter p').forEach(element => {
+            if (element.id == condition) {
+              element.classList.add('is-selected')
+            } else {
+              element.classList.remove('is-selected')
+            }
+          })
+          if (condition == 'unaccepted') {
+            this.condition.problems = this.tag.problems.filter(problem => problem.status == 0)
+          } else if (condition == 'in-progress') {
+            this.condition.problems = this.tag.problems.filter(problem => problem.status == 1)
+          } else if (condition == 'completed') {
+            this.condition.problems = this.tag.problems.filter(problem => problem.status == 2)
+          } else if (condition == 'all') {
+            this.condition.problems = this.tag.problems
+          }
+        },
+
         async getTag() {
             const tagSlug = this.$route.params.tag_slug
 
@@ -88,7 +115,7 @@ export default {
                 .get(`/api/v1/problems/${tagSlug}/`)
                 .then(response => {
                     this.tag = response.data
-                    
+                    this.filterOperation('all')
                     document.title = this.tag.name + ' | FlyMeCrods'
                 })
                 .catch(error => {
@@ -106,7 +133,10 @@ export default {
 
             this.$store.commit('setIsLoading', false)
         }
-    }
+    },
+    mounted() {
+        this.getTag()
+    },
 }
 </script>
 
@@ -139,7 +169,30 @@ export default {
   margin-bottom: 1rem;
 }
 
-@media screen and (max-width: 800px) {
+.filter {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.filter p {
+  padding: 0.2rem;
+  border-radius: 0.4rem;
+}
+
+.filter p:hover {
+  cursor: pointer;
+  color: grey;
+  background-color: #50ffb086;
+  transition: all 0.6s;
+}
+
+.is-selected {
+  color: grey;
+  background-color: #50ffb086;
+}
+
+@media screen and (max-width: 768px) {
   #tag-not-found {
     flex-direction: column;
   }
@@ -148,5 +201,8 @@ export default {
     justify-content: center;
     align-items: flex-start;
   } 
+  .filter {
+    font-size: 0.8rem;
+  }
 }
 </style>
