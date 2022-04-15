@@ -56,6 +56,10 @@
           <p id="completed" @click="filterOperation('completed')">Completed</p>
         </div>
 
+        <div class="column box is-12" v-if="this.condition.problems.length == 0" id="empty-slogan">
+          <p><b>Sorry, there is no suitable problems based on your selected condition.</b></p>
+        </div>
+
         <ProblemBox 
           v-for="problem in condition.problems"
           v-bind:key="problem.id"
