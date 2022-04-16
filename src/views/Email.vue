@@ -543,7 +543,7 @@ export default {
 }
 
 #write-email .receiver-address input, #write-email .topic input {
-  font-family: 'Noto Serif Display', serif;
+  font-family: 'Noto Serif Display', '宋体', serif;
   margin-left: 1rem;
   border: none;
   border-bottom: 1px solid darkgray;
@@ -551,7 +551,7 @@ export default {
 }
 
 textarea {
-  font-family: 'Noto Serif Display', serif;
+  font-family: 'Noto Serif Display', '宋体', serif;
 }
 
 #write-email .receiver-address button {

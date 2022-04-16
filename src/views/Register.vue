@@ -136,7 +136,7 @@ export default {
 }
 
 .register .box input {
-  font-family: 'Noto Serif Display', serif;
+  font-family: 'Noto Serif Display', '宋体', serif;
 }
 
 @media screen and (max-width: 800px) {

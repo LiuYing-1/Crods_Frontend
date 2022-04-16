@@ -120,6 +120,6 @@ export default {
 }
 
 .login .box input {
-  font-family: 'Noto Serif Display', serif;
+  font-family: 'Noto Serif Display', '宋体', serif;
 }
 </style>

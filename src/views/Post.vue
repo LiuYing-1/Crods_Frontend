@@ -270,7 +270,7 @@ export default {
 }
 
 form select, form input, form textarea {
-  font-family: "Noto Serif Display", serif;
+  font-family: "Noto Serif Display", '宋体', serif;
 }
 
 form #short-part {

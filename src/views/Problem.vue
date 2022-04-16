@@ -751,7 +751,7 @@ export default {
 }
 
 textarea {
-  font-family: 'Noto Serif Display', serif;
+  font-family: 'Noto Serif Display', '宋体', serif;
 }
 
 .reply-extend-part {
@@ -761,7 +761,7 @@ textarea {
 }
 
 input {
-  font-family: 'Noto Serif Display', serif;
+  font-family: 'Noto Serif Display', '宋体', serif;
 }
 
 .username {

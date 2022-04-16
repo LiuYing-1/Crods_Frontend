@@ -478,7 +478,7 @@ export default {
 
 <style scoped>
 form input, form select, form textarea {
-  font-family: 'Noto Serif Display', serif;
+  font-family: 'Noto Serif Display', '宋体', serif;
 }
 
 form input:focus, form select:focus, form textarea:focus {
@@ -560,7 +560,7 @@ form #tag {
 }
 
 #progress-part textarea {
-  font-family: 'Noto Serif Display', serif;
+  font-family: 'Noto Serif Display', '宋体', serif;
 }
 
 #progress-part .box #line-1 {

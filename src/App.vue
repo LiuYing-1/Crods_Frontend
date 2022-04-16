@@ -179,11 +179,11 @@ export default {
 }
 
 #wrapper {
-  font-family: "Noto Serif Display", serif;
+  font-family: "Noto Serif Display", '宋体', serif;
 }
 
 button {
-  font-family: "Noto Serif Display", serif;
+  font-family: "Noto Serif Display", '宋体', serif;
 }
 
 .navbar-brand #name {

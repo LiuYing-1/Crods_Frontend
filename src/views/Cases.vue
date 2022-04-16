@@ -37,11 +37,18 @@
             </div>
 
             <div class="content">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              Phasellus nec iaculis mauris. <a>@ibm-watson</a>.
-              <a href="#">#css</a> <a href="#">#responsive</a>
+              This problem is focused on the field of <a>#Informatics</a>, posted 
+              by the <a href="https://oulu.fi" target="_blank">University of Oulu</a>. The topic is to build a chatbot that can 
+              answer questions to the visitors with <a>@ibm-watson</a>. The team leader
+              LiuYing organized his team to work together to build the chatbot within 
+              the selected topic - <a>FlyMe</a>, namely the flight booking system. From 
+              Software Architecture to the implementation, including testing and delivering,
+              LiuYing spared no effort to it. After two months of work, the chatbot has been 
+              successfully deployed and is now available for the users to use. The teacher from 
+              Oulu University has also gave a high score to the chatbot - FlyMeYING. My overall
+              score is 5/5.
               <br>
-              <time datetime="2021-11-21">10:23 PM - 21 Dec 2021</time>
+              <b><time datetime="2021-11-21">10:23 PM - 21 Dec 2021</time></b>
             </div>
           </div>
         </div>
@@ -62,11 +69,10 @@
             </div>
 
             <div class="content">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              Phasellus nec iaculis mauris. <a>@bulmaio</a>.
-              <a href="#">#css</a> <a href="#">#responsive</a>
+              This problem is focused on the field of <a>#Informatics</a>, 
+              posted by <a href="https://njit.edu.cn" target="_blank">Nanjing Institute of Technology</a>.
               <br>
-              <time datetime="2019-12-03">01:09 PM - 03 Dec 2019</time>
+              <b><time datetime="2019-12-03">01:09 PM - 03 Dec 2019</time></b>
             </div>
           </div>
         </div>
@@ -293,5 +299,10 @@ export default {
   color: #00d1b2;
   transform: scale(1.1);
   transition: all 0.6s;
+}
+
+.card {
+  width: 100%;
+  height: 100%;
 }
 </style>

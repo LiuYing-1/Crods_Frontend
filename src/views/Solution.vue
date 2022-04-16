@@ -384,7 +384,7 @@ export default {
 }
 
 form input, form textarea {
-  font-family: 'Noto Serif Display', serif;
+  font-family: 'Noto Serif Display', '宋体', serif;
 }
 
 .is-hidden {

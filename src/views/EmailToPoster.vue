@@ -262,7 +262,7 @@ export default {
 }
 
 form input, textarea {
-  font-family: 'Noto Serif Display', serif;
+  font-family: 'Noto Serif Display', '宋体', serif;
 }
 
 form .input-module {
