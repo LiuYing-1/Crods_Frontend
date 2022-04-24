@@ -18,7 +18,7 @@
         </div>
       </div>
       <div class="column is-6" id="developer-profile">
-        <p class="title">Liu Ying</p>
+        <p class="title">Liu, Ying</p>
         <p class="subtitle"><b>Admin / Dev of FlyMeCrods</b></p>
         <p>Bachelor (Engineering), Software Engineering, <a href="https://www.njit.edu.cn">Nanjing Institute of Technology</a></p>
         <p>Bachelor (Science), Information Processing Science, <a href="https://oulu.fi">University of Oulu</a></p>
