@@ -150,9 +150,25 @@ export default {
             problem_deadline: '',
             problem_image: '',
             errors: [],
+
+            problems_urls: [],
+            problem_name_valid: true,
         }
     },
     methods: {
+      getAllProblemsUrls() {
+        axios
+          .get('api/v1/all-problems/')
+          .then(response => {
+            response.data.forEach(problem => {
+              this.problems_urls.push(problem.get_absolute_url)
+            })
+          })
+          .catch(error => {
+            console.log(error)
+          })
+      },
+
       getFileName() {
         const fileInput = document.querySelector('input[type=file]')
         fileInput.onchange = () => {
@@ -169,6 +185,24 @@ export default {
 
         // Validate the Required Form Data
         this.errors = []
+        
+        // Concat the problem_tag and problem_name => For Checking the exist of Problem with Tag
+        var check_tag_name = this.problem_tag
+        if (check_tag_name == '')
+          check_tag_name = 'Informatics'
+        check_tag_name = check_tag_name.toLowerCase()
+        var check_problem_name = this.problem_name
+        check_problem_name = check_problem_name.toLowerCase()
+        if (check_problem_name.indexOf(' ') != -1) {
+          check_problem_name = check_problem_name.replace(' ', '-')
+        }
+        var check_absolute_url = '/' + check_tag_name + '/' + check_problem_name + '/'
+        this.problem_name_valid = true
+        this.problems_urls.forEach(url => {
+          if (url == check_absolute_url) {
+            this.problem_name_valid = false
+          }
+        })
 
         if (this.problem_budget === '') {
             this.errors.push('Budget is missing!')
@@ -193,7 +227,11 @@ export default {
         if (this.problem_image === '') {
             this.errors.push('Problem Image is missing!')
         }
-        
+
+        if (!this.problem_name_valid) {
+            this.errors.push('Problem Name Already Exists!')
+        }
+
         if (!this.errors.length) {
           // Align the matching name of the tag
           var tag_name = this.problem_tag
@@ -240,6 +278,7 @@ export default {
       }
     },
     mounted() {
+      this.getAllProblemsUrls()
       this.getFileName()
       document.title = "Post | FlyMeCrods"
     },
