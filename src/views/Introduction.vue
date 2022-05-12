@@ -20,7 +20,7 @@
             </div>
           </div>
           <video class="hero-element column is-8" id="hero-video" playsinline poster preload="meta" tabindex="0" autoplay loop @click="videoOperation">
-            <source src="http://localhost:8000/media/videos/introduction-flymecrods.mp4" type="video/mp4">
+            <source :src="`${this.BACKEND_URL}media/videos/introduction-flymecrods.mp4`" type="video/mp4">
           </video>
           <div class="column is-2">
             <div class="box universities">
@@ -200,11 +200,12 @@
 </template>
 
 <script>
+import {BACKEND_URL} from '../assets/js/commons.js';
 export default {
   name: 'Introduction',
   data() {
     return {
-
+      BACKEND_URL,
     }
   },
   methods: {

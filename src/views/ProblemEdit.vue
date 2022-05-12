@@ -196,13 +196,13 @@
                         <p>{{ this.fileName }}</p>
                         <div class="buttons">
                           <button class="button is-dark">
-                            <a :href="this.rootUrl + this.solution.file_solution" target="_blank">
+                            <a :href="`${this.BACKEND_URL}${this.file_address}`" target="_blank">
                               <span><i class="far fa-eye mr-3"></i></span>
                               <span>Preview</span>
                             </a>
                           </button>
                           <button class="button is-light ml-3" v-if="this.solution.solution_result == 2">
-                            <a :href="this.rootUrl + this.solution.file_solution" download target="_blank">
+                            <a :href="`${this.BACKEND_URL}${this.file_address}`" download target="_blank">
                               <span><i class="fas fa-unlock mr-3"></i></span>
                               <span>Download</span>
                             </a>
@@ -295,6 +295,7 @@
 </template>
 
 <script>
+import {BACKEND_URL} from '../assets/js/commons.js'
 import axios from 'axios';
 import { toast } from 'bulma-toast';
 
@@ -309,7 +310,8 @@ export default {
       solution: {},
       fileName: '',
       rating: 0,
-      rootUrl: 'http://localhost:8000',
+      BACKEND_URL,
+      file_address: '',
       errors: [],
     }
   },
@@ -353,6 +355,7 @@ export default {
 
               if (this.solution.file_solution != null) {
                 this.fileName = this.solution.file_solution.split('/').pop()
+                this.file_address = this.solution.file_solution.slice(1)
               }
             })
             .catch(error => {

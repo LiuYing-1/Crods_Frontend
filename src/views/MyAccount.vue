@@ -43,7 +43,7 @@
           <div class="hero is-dark">
             <div class="hero-body">
               <div class="title">Global</div>
-              <div><a href="http://localhost:8000/admin" target="_blank">Click here to Enter <b>FlyMeCrods</b> Backend</a></div>
+              <div><a :href="`${this.BACKEND_URL}admin`" target="_blank">Click here to Enter <b>FlyMeCrods</b> Backend</a></div>
             </div>
           </div>
         </div>
@@ -618,6 +618,7 @@
 </template>
 
 <script>
+import {BACKEND_URL} from '../assets/js/commons.js'
 import axios from 'axios'
 import { toast } from 'bulma-toast'
 import {toRaw} from '@vue/reactivity'
@@ -625,6 +626,7 @@ export default {
     name: 'MyAccount',
     data() {
       return {
+        BACKEND_URL,
         save_button: false,
         posted: [],
         user: {

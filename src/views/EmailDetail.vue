@@ -163,7 +163,7 @@
           <div class="column is-12" id="attatchment-part" v-if="this.previousEmail.attatchment != null">
             <p id="title">Attatchment</p>
             <p id="content">
-              <a :href="'http://localhost:8000' + this.previousEmail.attatchment" target="_blank">
+              <a :href="this.BACKEND_URL + this.previousEmail.attatchment" target="_blank">
                 <span><i class="fas fa-file-download is-size-4 mr-3"></i></span>
                 <span>{{ this.previousFileName }}</span>
               </a>
@@ -176,12 +176,14 @@
 </template>
 
 <script>
+import {BACKEND_URL} from '../assets/js/commons.js'
 import axios from 'axios'
 import {toast} from 'bulma-toast'
 export default {
     name: 'EmailDetail',
     data() {
       return {
+        BACKEND_URL,
         previousEmail: {},
         previousFileName: '',
         user: {},
