@@ -22,7 +22,7 @@
       <div class="column is-12" id="attatchment-part" v-if="this.email.attatchment != null">
         <p id="title">Attatchment</p>
         <p id="content">
-          <a :href="'http://localhost:8000' + this.email.attatchment" target="_blank">
+          <a :href="`${this.BACKEND_URL}${this.attatchment_address}`" target="_blank">
             <span><i class="fas fa-file-download is-size-4 mr-3"></i></span>
             <span>{{ this.fileName }}</span>
           </a>
@@ -163,7 +163,7 @@
           <div class="column is-12" id="attatchment-part" v-if="this.previousEmail.attatchment != null">
             <p id="title">Attatchment</p>
             <p id="content">
-              <a :href="this.BACKEND_URL + this.previousEmail.attatchment" target="_blank">
+              <a :href="this.BACKEND_URL + this.previous_attatchment_address" target="_blank">
                 <span><i class="fas fa-file-download is-size-4 mr-3"></i></span>
                 <span>{{ this.previousFileName }}</span>
               </a>
@@ -184,6 +184,8 @@ export default {
     data() {
       return {
         BACKEND_URL,
+        attatchment_address: '',
+        previous_attatchment_address: '',
         previousEmail: {},
         previousFileName: '',
         user: {},
@@ -392,6 +394,7 @@ export default {
                   this.previousEmail = response.data
                   this.previousEmail.text = this.previousEmail.text.replace(/\r\n/g, "<br>")
                   if(this.previousEmail.attatchment != null) {
+                    this.previous_attatchment_address = this.previousEmail.attatchment.slice(1)
                     this.previousFileName = this.previousEmail.attatchment.split('/')[4]
                   }
                   this.previousEmail.date_sent = this.previousEmail.date_sent.split('T')[0]
@@ -412,6 +415,7 @@ export default {
             this.email.text = this.email.text.replace(/\r\n/g, "<br>")
 
             if(this.email.attatchment!=null) {
+              this.attatchment_address = this.email.attatchment.slice(1)
               this.sharedFile = this.email.attatchment
               this.sharedFileName = this.sharedFile.split('/')[4]
               this.fileName = this.email.attatchment.split('/')[4]
